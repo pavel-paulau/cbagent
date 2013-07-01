@@ -129,7 +129,7 @@ method is implemented in base class.
 Every collector instance embeds store and metadata client objects (see above).
 
 There is a convention to list implemented collectors in __init__ module of the
-packages. It significantly simplifies imports in 3rd party applications.
+package. It significantly simplifies imports in 3rd party applications.
 
 CLI wrappers
 ------------
@@ -163,7 +163,7 @@ won't be added to environment PATH after **cbagent** installation.
 Integrating cbagent
 -------------------
 
-CLI wrappers is a great example for **cbagent** integration. Any Python
+CLI wrappers is a great example of **cbagent** integration. Any Python
 application can easily utilize this pattern. For instance, perfrunner project
 (performance test framework) has a
 [helper](https://github.com/pavel-paulau/perfrunner/blob/master/perfrunner/helpers/cbmonitor.py)
