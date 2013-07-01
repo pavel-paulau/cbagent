@@ -1,6 +1,6 @@
 from setuptools import setup
 
-version = '1.0'
+version = '1.1'
 
 setup(
     name='cbagent',
@@ -18,11 +18,13 @@ setup(
             'ns_collector = cbagent.cli_wrappers.ns_collector:main',
             'atop_collector = cbagent.cli_wrappers.atop_collector:main',
             'at_collector = cbagent.cli_wrappers.at_collector:main',
+            'latency_collector = cbagent.cli_wrappers.latency_latency:main',
         ]
     },
     include_package_data=True,
     install_requires=[
         'argparse==1.2.1',
+        'couchbase<1.0.1',
         'eventlet==0.12.1',
         'fabric==1.6.0',
         'logger',
