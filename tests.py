@@ -10,7 +10,7 @@ from cbagent.collectors import NSServer
 class CollectorMock(NSServer):
 
     def _get(self, path, *args, **kwargs):
-        fname = 'collectors/fixtures/{0}.json'.format(path.replace('/', '_'))
+        fname = 'fixtures/{0}.json'.format(path.replace('/', '_'))
         with open(fname) as fh:
             return json.loads(fh.read())
 
