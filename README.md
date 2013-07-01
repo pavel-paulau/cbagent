@@ -172,4 +172,4 @@ for stats collection using cbagent.
 Running tests
 -------------
 
-    $ nosetests -v --with-coverage --cover-package=cbagent
+    $ make test
