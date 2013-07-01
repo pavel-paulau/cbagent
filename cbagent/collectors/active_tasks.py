@@ -39,8 +39,10 @@ class ActiveTasks(Collector):
 
     @staticmethod
     def _build_ns_server_task_id(task, metric):
-        return "{0}{1}_{2}".format(task["type"], task.get("designDocument", ""),
-                                   metric)
+        task_id = "{0}{1}_{2}".format(task["type"],
+                                      task.get("designDocument", ""),
+                                      metric)
+        return task_id.replace('/', '_')
 
     def _get_ns_server_tasks(self):
         tasks = self._get("/pools/default/tasks")
