@@ -55,7 +55,7 @@ class MetadataClient(object):
     @post_request
     def add_metric(self, name, bucket=None, server=None, unit=None,
                    description=None, collector=None):
-        logger.info("Adding metric: {0}".format(name))
+        logger.debug("Adding metric: {0}".format(name))
 
         url = self.base_url + "/add_metric_or_event/"
         params = {"name": name, "type": "metric",
