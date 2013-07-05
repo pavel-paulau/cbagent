@@ -7,8 +7,7 @@ from logger import logger
 class DefaultSettings(dict):
 
     def __init__(self):
-        self.cbmonitor_host = "127.0.0.1"
-        self.cbmonitor_port = 8000
+        self.cbmonitor_host_port = "127.0.0.1:8000"
 
         self.interval = 10
         self.seriesly_host = "127.0.0.1"
@@ -42,8 +41,7 @@ class Settings(DefaultSettings):
         except Exception as e:
             logger.interrupt("Failed to parse config file: {0}".format(e))
         try:
-            self.cbmonitor_host = config.get("cbmonitor", "host")
-            self.cbmonitor_port = config.getint("cbmonitor", "port")
+            self.cbmonitor_host_port = config.get("cbmonitor", "host_port")
 
             self.interval = config.getint("store", "interval")
             self.seriesly_host = config.get("store", "host")

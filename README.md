@@ -51,8 +51,7 @@ Regardless implementation any collector instance is initialized with settings
 object. It could be any arbitrary Python object with a set of predefined
 attributes. They include cbmonitor address:
 
-    cbmonitor_host  # e.g., "127.0.0.1"
-    cbmonitor_port  # e.g., 8000
+    cbmonitor_host_port  # e.g., "127.0.0.1:8000"
 
 seriesly database address:
 

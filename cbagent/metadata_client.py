@@ -19,8 +19,8 @@ class MetadataClient(object):
 
     def __init__(self, settings):
         self.settings = settings
-        self.base_url = "http://{0}:{1}/cbmonitor"\
-            .format(settings.cbmonitor_host, settings.cbmonitor_port)
+        self.base_url = "http://{0}/cbmonitor".format(
+            settings.cbmonitor_host_port)
 
     @post_request
     def add_cluster(self):
