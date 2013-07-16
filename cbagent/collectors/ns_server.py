@@ -27,15 +27,14 @@ class NSServer(Collector):
                 uri = server["stats"]["uri"]
                 yield uri, bucket, host  # server specific
 
-    def _get_samples(self, uri):
-        """Fetch and reduce stats taking only last sample for every metric"""
-        samples = self._get(uri)  # get last minute samples
-        return dict((k, v[-1]) for k, v in samples['op']['samples'].iteritems())
-
     def _get_stats(self, (uri, bucket, host)):
         """Generate stats dictionary (json document)"""
-        samples = self._get_samples(uri)
-        return samples, host, bucket
+        samples = self._get(uri)  # get last minute samples
+        stats = dict()
+        for metric, values in samples['op']['samples'].iteritems():
+            metric = metric.replace('/', '_')
+            stats[metric] = values[-1]  # only the most recent sample
+        return stats, host, bucket
 
     def sample(self):
         """Sample all available stats from ns_server"""
@@ -65,5 +64,6 @@ class NSServer(Collector):
             self.mc.add_server(node)
 
         for metric, bucket, node, desc in self._get_metrics():
+            metric = metric.replace('/', '_')
             self.mc.add_metric(metric, bucket=bucket, server=node,
                                description=desc, collector="ns_server")
