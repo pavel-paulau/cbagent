@@ -10,7 +10,9 @@ uhex = lambda: uuid4().hex
 
 class Latency(Collector):
 
-    _METRICS = ("latency_set", "latency_get", "latency_delete")
+    COLLECTOR = "latency"
+
+    METRICS = ("latency_set", "latency_get", "latency_delete")
 
     def __init__(self, settings):
         super(Latency, self).__init__(settings)
@@ -27,8 +29,9 @@ class Latency(Collector):
         self.mc.add_cluster()
         for bucket in self._get_buckets():
             self.mc.add_bucket(bucket)
-            for metric in self._METRICS:
-                self.mc.add_metric(metric, bucket=bucket, collector="latency")
+            for metric in self.METRICS:
+                self.mc.add_metric(metric, bucket=bucket,
+                                   collector=self.COLLECTOR)
 
     @staticmethod
     def _measure_latency(client, metric, key):
@@ -44,7 +47,9 @@ class Latency(Collector):
     def sample(self):
         for client in self.clients:
             key = uhex()
-            samples = dict(((metric, self._measure_latency(client, metric, key))
-                            for metric in self._METRICS))
+            samples = {}
+            for metric in self.METRICS:
+                latency = self._measure_latency(client, metric, key)
+                samples[metric] = latency
             self.store.append(samples, cluster=self.cluster,
-                              bucket=client.bucket, collector="latency")
+                              bucket=client.bucket, collector=self.COLLECTOR)

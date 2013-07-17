@@ -3,6 +3,8 @@ from cbagent.collectors import Collector
 
 class ActiveTasks(Collector):
 
+    COLLECTOR = "active_tasks"
+
     def __init__(self, settings):
         super(ActiveTasks, self).__init__(settings)
         self.pointers = list()
@@ -57,11 +59,11 @@ class ActiveTasks(Collector):
         pointer = hash((metric, bucket, server))
         if pointer not in self.pointers and self.update_metadata_enabled:
             self.pointers.append(pointer)
-            self.mc.add_metric(metric, bucket, server, collector="active_tasks")
+            self.mc.add_metric(metric, bucket, server, collector=self.COLLECTOR)
 
         data = {metric: value}
         self.store.append(data, cluster=self.cluster, bucket=bucket,
-                          server=server, collector="active_tasks")
+                          server=server, collector=self.COLLECTOR)
 
     def sample(self):
         """Sample info about ns_server and couchdb active tasks"""

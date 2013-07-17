@@ -5,6 +5,8 @@ from cbagent.collectors import Collector
 
 class NSServer(Collector):
 
+    COLLECTOR = "ns_server"
+
     def __init__(self, settings):
         super(NSServer, self).__init__(settings)
         self.pool = GreenPool()
@@ -40,7 +42,8 @@ class NSServer(Collector):
         """Sample all available stats from ns_server"""
         for stats, host, bucket in self.pool.imap(self._get_stats,
                                                   self._get_stats_uri()):
-            self.store.append(stats, self.cluster, host, bucket, "ns_server")
+            self.store.append(stats, self.cluster, host, bucket,
+                              self.COLLECTOR)
 
     def _get_metrics(self):
         """Yield names of metrics for every bucket"""
@@ -66,4 +69,4 @@ class NSServer(Collector):
         for metric, bucket, node, desc in self._get_metrics():
             metric = metric.replace('/', '_')
             self.mc.add_metric(metric, bucket=bucket, server=node,
-                               description=desc, collector="ns_server")
+                               description=desc, collector=self.COLLECTOR)

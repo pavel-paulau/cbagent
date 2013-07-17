@@ -4,8 +4,10 @@ from cbagent.collectors import Collector
 
 class Atop(Collector):
 
-    _METRICS = ("beam.smp_rss", "memcached_rss", "beam.smp_vsize",
-                "memcached_vsize", "beam.smp_cpu", "memcached_cpu")
+    COLLECTOR = "atop"
+
+    METRICS = ("beam.smp_rss", "memcached_rss", "beam.smp_vsize",
+               "memcached_vsize", "beam.smp_cpu", "memcached_cpu")
 
     def __init__(self, settings):
         super(Atop, self).__init__(settings)
@@ -25,8 +27,9 @@ class Atop(Collector):
         self.mc.add_cluster()
         for node in self._get_nodes():
             self.mc.add_server(node)
-            for metric in self._METRICS:
-                self.mc.add_metric(metric, server=node, collector="atop")
+            for metric in self.METRICS:
+                self.mc.add_metric(metric, server=node,
+                                   collector=self.COLLECTOR)
 
     @staticmethod
     def _remove_value_units(value):
@@ -64,4 +67,4 @@ class Atop(Collector):
 
         for node, samples in self._samples.iteritems():
             self.store.append(samples, cluster=self.cluster, server=node,
-                              collector="atop")
+                              collector=self.COLLECTOR)
