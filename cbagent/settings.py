@@ -15,6 +15,7 @@ class DefaultSettings(dict):
 
         self.cluster = "default"
         self.master_node = "127.0.0.1"
+        self.dest_master_node = None
         self.rest_username = "Administrator"
         self.rest_password = "password"
         self.ssh_username = "root"
@@ -55,6 +56,10 @@ class Settings(DefaultSettings):
             self.ssh_password = config.get("target", "ssh_password")
         except NoOptionError as e:
             logger.interrupt("Failed to get option from config: {0}".format(e))
+        try:
+            self.dest_master_node = config.get("target", "dest_master_node")
+        except NoOptionError:
+            pass
 
         logger.info("Configuration file successfully applied")
 
