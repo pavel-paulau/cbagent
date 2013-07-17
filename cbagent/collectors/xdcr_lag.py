@@ -14,7 +14,7 @@ class XdcrLag(Latency):
 
     COLLECTOR = "xdcr_lag"
 
-    METRICS = ("latency_set", "latency_get", "latency_delete")
+    METRICS = ("xdcr_lag", "xdcr_persistence_time", "xdcr_diff")
 
     def __init__(self, settings):
         super(Latency, self).__init__(settings)
@@ -53,7 +53,7 @@ class XdcrLag(Latency):
 
         return {
             "xdcr_lag": (t2 - t0) * 1000,
-            "xdcr_persisted_time": (t1 - t0) * 1000,
+            "xdcr_persistence_time": (t1 - t0) * 1000,
             "xdcr_diff": (t2 - t1) * 1000,
         }
 
