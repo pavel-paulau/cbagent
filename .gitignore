@@ -1,14 +1,6 @@
-*.db
 *.idea
 *.log
 *.log.*
 *.pyc
-.installed.cfg
-bin
-develop-eggs
-eggs
-parts
 *.egg-info
-webapp/media/*.png
-webapp/media/*.pdf
-db
+dist
