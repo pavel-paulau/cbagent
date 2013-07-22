@@ -45,6 +45,8 @@ class XdcrLag(Latency):
             r = src_client.observe(key)
             if r.value[0].flags == OBS_PERSISTED:
                 break
+            else:
+                sleep(0.05)
         t1 = time()
         dst_client.get(key)
         t2 = time()
