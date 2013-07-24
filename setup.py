@@ -1,6 +1,6 @@
 from setuptools import setup
 
-version = '1.3.2'
+version = '1.3.3'
 
 setup(
     name='cbagent',
@@ -18,7 +18,8 @@ setup(
             'ns_collector = cbagent.cli_wrappers.ns_collector:main',
             'atop_collector = cbagent.cli_wrappers.atop_collector:main',
             'at_collector = cbagent.cli_wrappers.at_collector:main',
-            'latency_collector = cbagent.cli_wrappers.latency_latency:main',
+            'latency_collector = cbagent.cli_wrappers.latency_collector:main',
+            'xdcr_lag_collector = cbagent.cli_wrappers.xdcr_lag_collector:main',
         ]
     },
     include_package_data=True,
