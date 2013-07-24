@@ -31,7 +31,6 @@ class XdcrLag(Latency):
                 host=settings.dest_master_node,
                 username=settings.rest_username,
                 password=settings.rest_password,
-                timeout=300,
                 quiet=True
             )
             self.clients.append((src_client, dst_client))
@@ -48,7 +47,12 @@ class XdcrLag(Latency):
             else:
                 sleep(0.05)
         t1 = time()
-        dst_client.get(key)
+        while True:
+            r = dst_client.get(key)
+            if r.value:
+                break
+            else:
+                sleep(0.05)
         t2 = time()
 
         src_client.delete(key)
