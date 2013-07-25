@@ -14,11 +14,7 @@ Prerequisites
 * Python 2.6 or 2.7
 * pip or equivalent
 
-Packages required for development are listed in requirements.txt:
-
-    $ pip -r requirements.txt
-
-virtualenv is high recommended though.
+Packages required for development are listed in requirements.txt.
 
 Installation
 ------------
@@ -158,6 +154,30 @@ details).
 
 CLI wrappers must be specified in setup.py script as entry moint. Otherwise it
 won't be added to environment PATH after **cbagent** installation.
+
+Running CLI wrappers in development mode
+----------------------------------------
+
+First of all create vitrual environment:
+
+    $ virtualenv env
+
+Activate it:
+
+    $ source env/bin/activate
+
+Install required packages:
+
+    $ pip -r requirements.txt
+
+Now you can run CLI wrappers:
+
+    $ python -m cbagent.cli_wrappers.ns_collector sample.cfg
+
+alternatively:
+
+    $ python setup.py install
+    $ ns_collector sample.cfg
 
 Integrating cbagent
 -------------------
