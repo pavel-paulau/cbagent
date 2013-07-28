@@ -55,11 +55,16 @@ class Collector(object):
                 return False
         return True
 
-    def _get_buckets(self):
-        """Yield bucket names"""
+    def _get_buckets(self, with_stats=False):
+        """Yield bucket names and optionally stats metadata"""
         buckets = self._get(path="/pools/default/buckets")
+        if not buckets:
+            buckets = self.retry(path="/pools/default/buckets")
         for bucket in buckets:
-            yield bucket["name"]
+            if with_stats:
+                yield bucket["name"], bucket["stats"]
+            else:
+                yield bucket["name"]
 
     def _get_nodes(self):
         """Yield name of nodes in cluster"""

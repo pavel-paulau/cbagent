@@ -11,15 +11,9 @@ class NSServer(Collector):
         super(NSServer, self).__init__(settings)
         self.pool = GreenPool()
 
-    def _get_buckets_and_stats(self):
-        """Yield bucket names and stats metadata"""
-        buckets = self._get(path="/pools/default/buckets")
-        for bucket in buckets:
-            yield bucket["name"], bucket["stats"]
-
     def _get_stats_uri(self):
         """Yield stats URIs"""
-        for bucket, stats in self._get_buckets_and_stats():
+        for bucket, stats in self._get_buckets(with_stats=True):
             uri = stats["uri"]
             yield uri, bucket, None  # cluster wide
 
@@ -48,7 +42,7 @@ class NSServer(Collector):
     def _get_metrics(self):
         """Yield names of metrics for every bucket"""
         nodes = list(self._get_nodes())
-        for bucket, stats in self._get_buckets_and_stats():
+        for bucket, stats in self._get_buckets(with_stats=True):
             stats_directory = self._get(path=stats["directoryURI"])
             for block in stats_directory["blocks"]:
                 for metric in block["stats"]:
