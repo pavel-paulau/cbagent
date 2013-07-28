@@ -11,19 +11,19 @@ class NSServer(Collector):
         super(NSServer, self).__init__(settings)
         self.pool = GreenPool()
 
-    def _get_buckets(self):
+    def _get_buckets_and_stats(self):
         """Yield bucket names and stats metadata"""
-        buckets = self._get("/pools/default/buckets")
+        buckets = self._get(path="/pools/default/buckets")
         for bucket in buckets:
             yield bucket["name"], bucket["stats"]
 
     def _get_stats_uri(self):
         """Yield stats URIs"""
-        for bucket, stats in self._get_buckets():
+        for bucket, stats in self._get_buckets_and_stats():
             uri = stats["uri"]
             yield uri, bucket, None  # cluster wide
 
-            stats_list = self._get(stats["nodeStatsListURI"])
+            stats_list = self._get(path=stats["nodeStatsListURI"])
             for server in stats_list["servers"]:
                 host = server["hostname"].split(":")[0]
                 uri = server["stats"]["uri"]
@@ -31,7 +31,7 @@ class NSServer(Collector):
 
     def _get_stats(self, (uri, bucket, host)):
         """Generate stats dictionary (json document)"""
-        samples = self._get(uri)  # get last minute samples
+        samples = self._get(path=uri)  # get last minute samples
         stats = dict()
         for metric, values in samples['op']['samples'].iteritems():
             metric = metric.replace('/', '_')
@@ -48,8 +48,8 @@ class NSServer(Collector):
     def _get_metrics(self):
         """Yield names of metrics for every bucket"""
         nodes = list(self._get_nodes())
-        for bucket, stats in self._get_buckets():
-            stats_directory = self._get(stats["directoryURI"])
+        for bucket, stats in self._get_buckets_and_stats():
+            stats_directory = self._get(path=stats["directoryURI"])
             for block in stats_directory["blocks"]:
                 for metric in block["stats"]:
                     yield metric["name"], bucket, None, metric["desc"]
@@ -60,7 +60,7 @@ class NSServer(Collector):
         """Update cluster's, server's and bucket's metadata"""
         self.mc.add_cluster()
 
-        for bucket in super(NSServer, self)._get_buckets():
+        for bucket in self._get_buckets():
             self.mc.add_bucket(bucket)
 
         for node in self._get_nodes():

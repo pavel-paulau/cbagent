@@ -57,13 +57,13 @@ class Collector(object):
 
     def _get_buckets(self):
         """Yield bucket names"""
-        buckets = self._get("/pools/default/buckets")
+        buckets = self._get(path="/pools/default/buckets")
         for bucket in buckets:
             yield bucket["name"]
 
     def _get_nodes(self):
         """Yield name of nodes in cluster"""
-        pool = self._get("/pools/default")
+        pool = self._get(path="/pools/default")
         for node in pool["nodes"]:
             yield node["hostname"].split(":")[0]
 
