@@ -15,7 +15,7 @@ class Collector(object):
         self.cluster = settings.cluster
         self.master_node = settings.master_node
         self.auth = (settings.rest_username, settings.rest_password)
-        self.nodes = list(self._get_nodes())
+        self.nodes = list(self.get_nodes())
 
         self.interval = settings.interval
 
@@ -38,7 +38,7 @@ class Collector(object):
         for node in self.nodes:
             if self._check_node(node):
                 self.master_mode = node
-                self.nodes = list(self._get_nodes())
+                self.nodes = list(self.get_nodes())
                 break
         else:
             logger.interrupt("Failed to find at least one node")
@@ -55,7 +55,7 @@ class Collector(object):
                 return False
         return True
 
-    def _get_buckets(self, with_stats=False):
+    def get_buckets(self, with_stats=False):
         """Yield bucket names and optionally stats metadata"""
         buckets = self._get(path="/pools/default/buckets")
         if not buckets:
@@ -66,7 +66,7 @@ class Collector(object):
             else:
                 yield bucket["name"]
 
-    def _get_nodes(self):
+    def get_nodes(self):
         """Yield name of nodes in cluster"""
         pool = self._get(path="/pools/default")
         for node in pool["nodes"]:

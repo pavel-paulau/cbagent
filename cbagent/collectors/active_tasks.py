@@ -14,10 +14,10 @@ class ActiveTasks(Collector):
         """Update cluster's, server's and bucket's metadata"""
         self.mc.add_cluster()
 
-        for bucket in self._get_buckets():
+        for bucket in self.get_buckets():
             self.mc.add_bucket(bucket)
 
-        for node in self._get_nodes():
+        for node in self.get_nodes():
             self.mc.add_server(node)
 
     @staticmethod
@@ -69,6 +69,6 @@ class ActiveTasks(Collector):
         """Sample info about ns_server and couchdb active tasks"""
         for metric, value, bucket in self._get_ns_server_tasks():
             self._append(metric, value, bucket=bucket)
-        for node in self._get_nodes():
+        for node in self.get_nodes():
             for metric, value, bucket, server in self._get_couchdb_tasks(node):
                 self._append(metric, value, bucket, server)

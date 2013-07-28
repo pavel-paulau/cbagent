@@ -13,7 +13,7 @@ class NSServer(Collector):
 
     def _get_stats_uri(self):
         """Yield stats URIs"""
-        for bucket, stats in self._get_buckets(with_stats=True):
+        for bucket, stats in self.get_buckets(with_stats=True):
             uri = stats["uri"]
             yield uri, bucket, None  # cluster wide
 
@@ -41,8 +41,8 @@ class NSServer(Collector):
 
     def _get_metrics(self):
         """Yield names of metrics for every bucket"""
-        nodes = list(self._get_nodes())
-        for bucket, stats in self._get_buckets(with_stats=True):
+        nodes = list(self.get_nodes())
+        for bucket, stats in self.get_buckets(with_stats=True):
             stats_directory = self._get(path=stats["directoryURI"])
             for block in stats_directory["blocks"]:
                 for metric in block["stats"]:
@@ -54,10 +54,10 @@ class NSServer(Collector):
         """Update cluster's, server's and bucket's metadata"""
         self.mc.add_cluster()
 
-        for bucket in self._get_buckets():
+        for bucket in self.get_buckets():
             self.mc.add_bucket(bucket)
 
-        for node in self._get_nodes():
+        for node in self.get_nodes():
             self.mc.add_server(node)
 
         for metric, bucket, node, desc in self._get_metrics():

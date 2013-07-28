@@ -19,7 +19,7 @@ class XdcrLag(Latency):
     def __init__(self, settings):
         super(Latency, self).__init__(settings)
         self.clients = []
-        for bucket in self._get_buckets():
+        for bucket in self.get_buckets():
             src_client = Couchbase.connect(
                 bucket=bucket,
                 host=settings.master_node,

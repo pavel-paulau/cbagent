@@ -17,7 +17,7 @@ class Latency(Collector):
     def __init__(self, settings):
         super(Latency, self).__init__(settings)
         self.clients = []
-        for bucket in self._get_buckets():
+        for bucket in self.get_buckets():
             self.clients.append(Couchbase.connect(
                 bucket=bucket,
                 host=settings.master_node,
@@ -27,7 +27,7 @@ class Latency(Collector):
 
     def update_metadata(self):
         self.mc.add_cluster()
-        for bucket in self._get_buckets():
+        for bucket in self.get_buckets():
             self.mc.add_bucket(bucket)
             for metric in self.METRICS:
                 self.mc.add_metric(metric, bucket=bucket,
