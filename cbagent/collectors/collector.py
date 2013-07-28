@@ -22,7 +22,7 @@ class Collector(object):
         self.store = SerieslyStore(settings.seriesly_host)
         self.mc = MetadataClient(settings)
 
-    def _get(self, path, server=None, port=8091):
+    def get_http(self, path, server=None, port=8091):
         url = "http://{0}:{1}{2}".format(server or self.master_node, port, path)
         try:
             r = requests.get(url=url, auth=self.auth)
@@ -41,7 +41,7 @@ class Collector(object):
                 break
         else:
             logger.interrupt("Failed to find at least one node")
-        return self._get(*arg, **kwargs)
+        return self.get_http(*arg, **kwargs)
 
     def _check_node(self, node):
         try:
@@ -50,12 +50,12 @@ class Collector(object):
         except socket.error:
             return False
         else:
-            if not self._get(path="/pools", server=node).get("pools"):
+            if not self.get_http(path="/pools", server=node).get("pools"):
                 return False
         return True
 
     def get_buckets(self, with_stats=False):
-        buckets = self._get(path="/pools/default/buckets")
+        buckets = self.get_http(path="/pools/default/buckets")
         if not buckets:
             buckets = self.retry(path="/pools/default/buckets")
         for bucket in buckets:
@@ -65,7 +65,7 @@ class Collector(object):
                 yield bucket["name"]
 
     def get_nodes(self):
-        pool = self._get(path="/pools/default")
+        pool = self.get_http(path="/pools/default")
         for node in pool["nodes"]:
             yield node["hostname"].split(":")[0]
 

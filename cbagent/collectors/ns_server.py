@@ -16,14 +16,14 @@ class NSServer(Collector):
             uri = stats["uri"]
             yield uri, bucket, None  # cluster wide
 
-            stats_list = self._get(path=stats["nodeStatsListURI"])
+            stats_list = self.get_http(path=stats["nodeStatsListURI"])
             for server in stats_list["servers"]:
                 host = server["hostname"].split(":")[0]
                 uri = server["stats"]["uri"]
                 yield uri, bucket, host  # server specific
 
     def _get_stats(self, (uri, bucket, host)):
-        samples = self._get(path=uri)  # get last minute samples
+        samples = self.get_http(path=uri)  # get last minute samples
         stats = dict()
         for metric, values in samples['op']['samples'].iteritems():
             metric = metric.replace('/', '_')
@@ -39,7 +39,7 @@ class NSServer(Collector):
     def _get_metrics(self):
         nodes = list(self.get_nodes())
         for bucket, stats in self.get_buckets(with_stats=True):
-            stats_directory = self._get(path=stats["directoryURI"])
+            stats_directory = self.get_http(path=stats["directoryURI"])
             for block in stats_directory["blocks"]:
                 for metric in block["stats"]:
                     yield metric["name"], bucket, None, metric["desc"]

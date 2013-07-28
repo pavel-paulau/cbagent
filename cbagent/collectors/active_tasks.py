@@ -25,7 +25,7 @@ class ActiveTasks(Collector):
                                     metric)
 
     def _get_couchdb_tasks(self, server):
-        tasks = self._get(path="/_active_tasks", server=server, port=8092)
+        tasks = self.get_http(path="/_active_tasks", server=server, port=8092)
         for task in tasks:
             if "index_barrier" in task["type"]:
                 yield "running_" + task["type"], task["running"], None, None
@@ -46,7 +46,7 @@ class ActiveTasks(Collector):
         return task_id.replace('/', '_')
 
     def _get_ns_server_tasks(self):
-        tasks = self._get(path="/pools/default/tasks")
+        tasks = self.get_http(path="/pools/default/tasks")
         for task in tasks:
             bucket = task.get("bucket", None)
             for metric in ("changesDone", "totalChanges", "progress"):
