@@ -26,27 +26,34 @@ class Collector(object):
         """HTTP GET request to Couchbase server with basic authentication"""
         url = "http://{0}:{1}{2}".format(server or self.master_node, port, path)
         try:
-            return requests.get(url=url, auth=self.auth).json()
-        except requests.exceptions.ConnectionError:
-            if hasattr(self, "nodes"):
-                self._update_nodes()
-                return self._get(path, server, port)
+            r = requests.get(url=url, auth=self.auth)
+            if r.status_code in (200, 201, 202):
+                return r.json()
             else:
-                logger.interrupt("Failed to find at least one cluster node")
+                return self.retry(path, server, port)
+        except requests.exceptions.ConnectionError:
+            return self.retry(path, server, port)
 
-    def _update_nodes(self):
-        """Update list of available nodes and address of master node"""
-        s = socket.socket()
+    def retry(self, *arg, **kwargs):
         for node in self.nodes:
-            try:
-                s.connect((node, 8091))
+            if self._check_node(node):
                 self.master_mode = node
                 self.nodes = list(self._get_nodes())
                 break
-            except socket.error:
-                pass
         else:
-            raise Exception("Cluster is not available")
+            logger.interrupt("Failed to find at least one node")
+        return self._get(*arg, **kwargs)
+
+    def _check_node(self, node):
+        try:
+            s = socket.socket()
+            s.connect((node, 8091))
+        except socket.error:
+            return False
+        else:
+            if not self._get(path="/pools", server=node).get("pools"):
+                return False
+        return True
 
     def _get_buckets(self):
         """Yield bucket names"""
