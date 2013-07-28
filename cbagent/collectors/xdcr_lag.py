@@ -25,13 +25,14 @@ class XdcrLag(Latency):
                 host=settings.master_node,
                 username=settings.rest_username,
                 password=settings.rest_password,
+                quiet=True,
             )
             dst_client = Couchbase.connect(
                 bucket=bucket,
                 host=settings.dest_master_node,
                 username=settings.rest_username,
                 password=settings.rest_password,
-                quiet=True
+                quiet=True,
             )
             self.clients.append((src_client, dst_client))
 
