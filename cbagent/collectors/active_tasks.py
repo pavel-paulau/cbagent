@@ -11,7 +11,6 @@ class ActiveTasks(Collector):
         self.update_metadata_enabled = settings.update_metadata
 
     def update_metadata(self):
-        """Update cluster's, server's and bucket's metadata"""
         self.mc.add_cluster()
 
         for bucket in self.get_buckets():
@@ -66,7 +65,6 @@ class ActiveTasks(Collector):
                           server=server, collector=self.COLLECTOR)
 
     def sample(self):
-        """Sample info about ns_server and couchdb active tasks"""
         for metric, value, bucket in self._get_ns_server_tasks():
             self._append(metric, value, bucket=bucket)
         for node in self.get_nodes():

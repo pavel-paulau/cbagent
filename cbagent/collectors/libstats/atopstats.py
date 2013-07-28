@@ -31,9 +31,6 @@ class AtopStats(RemoteStats):
         self._vsize_column = self._get_vsize_column()
         self._rss_column = self._get_rss_column()
 
-    def is_atop_running(self):
-        raise NotImplementedError
-
     def restart_atop(self):
         self.stop_atop()
         self.start_atop()

@@ -12,7 +12,6 @@ class NSServer(Collector):
         self.pool = GreenPool()
 
     def _get_stats_uri(self):
-        """Yield stats URIs"""
         for bucket, stats in self.get_buckets(with_stats=True):
             uri = stats["uri"]
             yield uri, bucket, None  # cluster wide
@@ -24,7 +23,6 @@ class NSServer(Collector):
                 yield uri, bucket, host  # server specific
 
     def _get_stats(self, (uri, bucket, host)):
-        """Generate stats dictionary (json document)"""
         samples = self._get(path=uri)  # get last minute samples
         stats = dict()
         for metric, values in samples['op']['samples'].iteritems():
@@ -33,14 +31,12 @@ class NSServer(Collector):
         return stats, host, bucket
 
     def sample(self):
-        """Sample all available stats from ns_server"""
         for stats, host, bucket in self.pool.imap(self._get_stats,
                                                   self._get_stats_uri()):
             self.store.append(stats, self.cluster, host, bucket,
                               self.COLLECTOR)
 
     def _get_metrics(self):
-        """Yield names of metrics for every bucket"""
         nodes = list(self.get_nodes())
         for bucket, stats in self.get_buckets(with_stats=True):
             stats_directory = self._get(path=stats["directoryURI"])
@@ -51,7 +47,6 @@ class NSServer(Collector):
                         yield metric["name"], bucket, node, metric["desc"]
 
     def update_metadata(self):
-        """Update cluster's, server's and bucket's metadata"""
         self.mc.add_cluster()
 
         for bucket in self.get_buckets():

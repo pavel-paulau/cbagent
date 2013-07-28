@@ -23,7 +23,6 @@ class Collector(object):
         self.mc = MetadataClient(settings)
 
     def _get(self, path, server=None, port=8091):
-        """HTTP GET request to Couchbase server with basic authentication"""
         url = "http://{0}:{1}{2}".format(server or self.master_node, port, path)
         try:
             r = requests.get(url=url, auth=self.auth)
@@ -56,7 +55,6 @@ class Collector(object):
         return True
 
     def get_buckets(self, with_stats=False):
-        """Yield bucket names and optionally stats metadata"""
         buckets = self._get(path="/pools/default/buckets")
         if not buckets:
             buckets = self.retry(path="/pools/default/buckets")
@@ -67,13 +65,9 @@ class Collector(object):
                 yield bucket["name"]
 
     def get_nodes(self):
-        """Yield name of nodes in cluster"""
         pool = self._get(path="/pools/default")
         for node in pool["nodes"]:
             yield node["hostname"].split(":")[0]
-
-    def update_metadata(self):
-        raise NotImplementedError
 
     def sample(self):
         raise NotImplementedError
