@@ -12,12 +12,12 @@ from cbagent.metadata_client import MetadataClient
 class Collector(object):
 
     def __init__(self, settings):
+        self.interval = settings.interval
+
         self.cluster = settings.cluster
         self.master_node = settings.master_node
         self.auth = (settings.rest_username, settings.rest_password)
         self.nodes = list(self.get_nodes())
-
-        self.interval = settings.interval
 
         self.store = SerieslyStore(settings.seriesly_host)
         self.mc = MetadataClient(settings)
@@ -34,6 +34,7 @@ class Collector(object):
             return self.retry(path, server, port)
 
     def retry(self, *arg, **kwargs):
+        time.sleep(self.interval)
         for node in self.nodes:
             if self._check_node(node):
                 self.master_node = node
