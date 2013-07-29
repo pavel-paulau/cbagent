@@ -36,7 +36,7 @@ class Collector(object):
     def retry(self, *arg, **kwargs):
         for node in self.nodes:
             if self._check_node(node):
-                self.master_mode = node
+                self.master_node = node
                 self.nodes = list(self.get_nodes())
                 break
         else:
