@@ -1,6 +1,6 @@
 from setuptools import setup
 
-version = '1.4.0'
+version = '1.5.0'
 
 setup(
     name='cbagent',
@@ -25,11 +25,12 @@ setup(
     include_package_data=True,
     install_requires=[
         'argparse==1.2.1',
-        'couchbase<1.0.1',
+        'couchbase==1.0.0',
         'eventlet==0.12.1',
         'fabric==1.6.0',
         'logger',
         'requests==1.2.0',
         'seriesly',
+        'spring'
     ],
 )
