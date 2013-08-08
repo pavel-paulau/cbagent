@@ -17,12 +17,10 @@ class SpringLatency(Latency):
         super(Latency, self).__init__(settings)
         self.clients = []
         for bucket in self.get_buckets():
-            self.clients.append(CBGen(
-                bucket=bucket,
-                host=settings.master_node,
-                username=settings.rest_username,
-                password=settings.rest_password,
-            ))
+            client = CBGen(bucket=bucket, host=settings.master_node,
+                           username=settings.rest_username,
+                           password=settings.rest_password)
+            self.clients.append((bucket, client))
 
         self.existing_keys = ExistingKey(workload.working_set,
                                          workload.working_set_access,
@@ -42,12 +40,12 @@ class SpringLatency(Latency):
         return 1000 * (time() - t0)  # Latency in ms
 
     def sample(self):
-        for client in self.clients:
+        for bucket, client in self.clients:
             samples = {}
             for metric in self.METRICS:
                 samples[metric] = self.measure(client, metric)
             self.store.append(samples, cluster=self.cluster,
-                              bucket=client.bucket, collector=self.COLLECTOR)
+                              bucket=bucket, collector=self.COLLECTOR)
 
 
 class SpringQueryLatency(SpringLatency):
