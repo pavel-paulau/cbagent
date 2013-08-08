@@ -27,7 +27,7 @@ class SpringLatency(Latency):
         self.existing_keys = ExistingKey(workload.working_set,
                                          workload.working_set_access,
                                          prefix=prefix)
-        self.new_docs = NewDocument(workload.avg_size)
+        self.new_docs = NewDocument(workload.size)
         self.items = workload.items
 
     def measure(self, client, metric):
