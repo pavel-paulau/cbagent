@@ -13,6 +13,7 @@ Prerequisites
 
 * Python 2.6 or 2.7
 * pip or equivalent
+* libcouchbase
 
 Packages required for development are listed in requirements.txt.
 
