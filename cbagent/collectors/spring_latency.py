@@ -18,8 +18,7 @@ class SpringLatency(Latency):
         self.clients = []
         for bucket in self.get_buckets():
             client = CBGen(bucket=bucket, host=settings.master_node,
-                           username=settings.rest_username,
-                           password=settings.rest_password)
+                           username=bucket, password=settings.rest_password)
             self.clients.append((bucket, client))
 
         self.existing_keys = ExistingKey(workload.working_set,
