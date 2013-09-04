@@ -1,9 +1,12 @@
+import sys
+from Queue import Queue, Empty
 from time import time, sleep
+from threading import Thread
 from uuid import uuid4
 
 from couchbase import Couchbase
 from couchbase.user_constants import OBS_PERSISTED
-
+from logger import logger
 
 from cbagent.collectors import Latency
 
@@ -16,8 +19,11 @@ class XdcrLag(Latency):
 
     METRICS = ("xdcr_lag", "xdcr_persistence_time", "xdcr_diff")
 
+    NUM_THREADS = 10
+
     def __init__(self, settings):
         super(Latency, self).__init__(settings)
+
         self.clients = []
         for bucket in self.get_buckets():
             src_client = Couchbase.connect(
@@ -70,3 +76,28 @@ class XdcrLag(Latency):
             self.store.append(lags, cluster=self.cluster,
                               bucket=src_client.bucket,
                               collector=self.COLLECTOR)
+
+    def _collect(self):
+        while True:
+            try:
+                self.sample()
+            except Exception as e:
+                logger.warn(e)
+            try:
+                self.queue.get(timeout=1)
+            except Empty:
+                return
+
+    def collect(self):
+        self.queue = Queue(maxsize=self.NUM_THREADS)
+        map(lambda _: self.queue.put(None), range(self.NUM_THREADS))
+
+        for _ in range(self.NUM_THREADS):
+            Thread(target=self._collect).start()
+
+        while True:
+            try:
+                if not self.queue.full():
+                    self.queue.put(None, block=True)
+            except KeyboardInterrupt:
+                sys.exit()
