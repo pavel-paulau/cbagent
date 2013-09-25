@@ -1,14 +1,13 @@
-from fabric.api import hide, settings
+from fabric.api import hide, settings, parallel
 from fabric.tasks import execute
 
 
 def multi_node_task(task):
     def wrapper(*args, **kargs):
         self = args[0]
-        with hide("output"):
-            with settings(user=self.user, password=self.password,
-                          warn_only=True):
-                return execute(task, *args, hosts=self.hosts, **kargs)
+        with settings(user=self.user, password=self.password, warn_only=True):
+            with hide("output"):
+                return execute(parallel(task), *args, hosts=self.hosts, **kargs)
     return wrapper
 
 
