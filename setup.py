@@ -1,6 +1,6 @@
 from setuptools import setup
 
-version = '1.5.6'
+version = '1.5.7'
 
 setup(
     name='cbagent',
@@ -27,7 +27,7 @@ setup(
         'argparse==1.2.1',
         'couchbase==1.0.0',
         'eventlet==0.12.1',
-        'fabric==1.6.0',
+        'fabric==1.8.0',
         'logger',
         'requests==1.2.0',
         'seriesly',
