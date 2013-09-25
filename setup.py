@@ -24,7 +24,7 @@ setup(
     },
     include_package_data=True,
     install_requires=[
-        'argparse==1.2.1',
+        'argparse',
         'couchbase==1.0.0',
         'eventlet==0.12.1',
         'fabric==1.8.0',
