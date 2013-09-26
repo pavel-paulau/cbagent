@@ -33,6 +33,8 @@ class Atop(Collector):
 
     @staticmethod
     def _remove_value_units(value):
+        if value is None:
+            return
         for magnitude, denotement in enumerate(("K", "M", "G"), start=1):
             if denotement in value:
                 return float(value.replace(denotement, "")) * 1024 ** magnitude
