@@ -8,7 +8,7 @@ from fabric.tasks import execute
 def multi_node_task(task, *args, **kargs):
     self = args[0]
     with settings(user=self.user, password=self.password, warn_only=True):
-        with hide("output"):
+        with hide("running", "output"):
             return execute(parallel(task), *args, hosts=self.hosts, **kargs)
 
 
@@ -17,7 +17,7 @@ def single_node_task(task, *args, **kargs):
     self = args[0]
     with settings(user=self.user, password=self.password, warn_only=True,
                   host_string=self.hosts[0]):
-        with hide("output"):
+        with hide("running", "output"):
             return task(*args, **kargs)
 
 
