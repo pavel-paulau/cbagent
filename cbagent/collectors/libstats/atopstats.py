@@ -46,27 +46,32 @@ class AtopStats(RemoteStats):
         return output.split().index("RSIZE")
 
     @single_node_task
-    def _get_cpu_column(ip):
+    def _get_cpu_column(self):
         output = run("atop 1 1 | grep PID")
         return output.split().index("CPU")
+
+    @staticmethod
+    def _get_metric(cmd, column):
+        result = run(cmd)
+        if not result.return_code:
+            return result.split()[column]
+        else:
+            return None
 
     @multi_node_task
     def get_process_cpu(self, process):
         title = process + "_cpu"
-        cmd = self._base_cmd + "| grep {0}".format(process)
-        output = run(cmd)
-        return title, output.split()[self._cpu_column]
+        cmd = "{0} | grep {1}".format(self._base_cmd, process)
+        return title, self._get_metric(cmd, self._cpu_column)
 
     @multi_node_task
     def get_process_vsize(self, process):
         title = process + "_vsize"
-        cmd = self._base_cmd + " -m | grep {0}".format(process)
-        output = run(cmd)
-        return title, output.split()[self._vsize_column]
+        cmd = "{0} -m | grep {1}".format(self._base_cmd, process)
+        return title, self._get_metric(cmd, self._vsize_column)
 
     @multi_node_task
     def get_process_rss(self, process):
         title = process + "_rss"
-        cmd = self._base_cmd + " -m | grep {0}".format(process)
-        output = run(cmd)
-        return title, output.split()[self._rss_column]
+        cmd = "{0} -m | grep {1}".format(self._base_cmd, process)
+        return title, self._get_metric(cmd, self._rss_column)
