@@ -42,6 +42,8 @@ class XdcrLag(Latency):
             )
             self.clients.append((src_client, dst_client))
 
+        self.queue = Queue(maxsize=self.NUM_THREADS)
+
     @staticmethod
     def _measure_lags(src_client, dst_client):
         key = "xdcr_track_{0}".format(uhex())
@@ -90,9 +92,7 @@ class XdcrLag(Latency):
                 return
 
     def collect(self):
-        self.queue = Queue(maxsize=self.NUM_THREADS)
         map(lambda _: self.queue.put(None), range(self.NUM_THREADS))
-
         for _ in range(self.NUM_THREADS):
             Thread(target=self._collect).start()
 
