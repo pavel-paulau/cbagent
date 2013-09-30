@@ -42,7 +42,8 @@ class XdcrLag(Latency):
             )
             self.clients.append((src_client, dst_client))
 
-    def _measure_lags(self, src_client, dst_client):
+    @staticmethod
+    def _measure_lags(src_client, dst_client):
         key = "xdcr_track_{0}".format(uhex())
 
         t0 = time()
