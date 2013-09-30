@@ -32,6 +32,7 @@ class XdcrLag(Latency):
                 username=bucket,
                 password=settings.rest_password,
                 quiet=True,
+                unlock_gil=False,
             )
             dst_client = Couchbase.connect(
                 bucket=bucket,
@@ -39,6 +40,7 @@ class XdcrLag(Latency):
                 username=bucket,
                 password=settings.rest_password,
                 quiet=True,
+                unlock_gil=False,
             )
             self.clients.append((src_client, dst_client))
 

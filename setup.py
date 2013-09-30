@@ -1,6 +1,6 @@
 from setuptools import setup
 
-version = '1.5.9'
+version = '1.5.10'
 
 setup(
     name='cbagent',
