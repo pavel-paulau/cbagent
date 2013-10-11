@@ -1,6 +1,18 @@
+from decorator import decorator
 from logger import logger
 from seriesly import Seriesly
 from seriesly.exceptions import ConnectionError
+
+
+def _memoize(method, self, db):
+    if db not in method.cache:
+        method.cache[db] = method(self, db)
+    return method.cache[db]
+
+
+def memoize(method):
+    method.cache = {}
+    return decorator(_memoize, method)
 
 
 class SerieslyStore(object):
@@ -15,6 +27,7 @@ class SerieslyStore(object):
             db_name = db_name.replace(char, "")
         return db_name
 
+    @memoize
     def _get_db(self, db_name):
         try:
             existing_dbs = self.seriesly.list_dbs()
