@@ -1,5 +1,5 @@
 argparse
-couchbase==1.0.0
+couchbase==1.1.0
 coverage==3.6
 eventlet==0.12.1
 fabric==1.8.0
