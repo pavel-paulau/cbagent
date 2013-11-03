@@ -16,6 +16,7 @@ class DefaultSettings(dict):
         self.cluster = "default"
         self.master_node = "127.0.0.1"
         self.dest_master_node = None
+        self.sync_gateway_nodes = None
         self.rest_username = "Administrator"
         self.rest_password = "password"
         self.ssh_username = "root"
@@ -58,6 +59,11 @@ class Settings(DefaultSettings):
             logger.interrupt("Failed to get option from config: {0}".format(e))
         try:
             self.dest_master_node = config.get("target", "dest_master_node")
+        except NoOptionError:
+            pass
+        try:
+            self.sync_gateway_nodes = config.get("target",
+                                                 "sync_gateway_nodes").split()
         except NoOptionError:
             pass
 
