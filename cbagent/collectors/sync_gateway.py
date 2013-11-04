@@ -24,7 +24,7 @@ class SyncGateway(Collector):
         stats_api = "http://{0}:4985/_stats".format(node)
         for _, stats in requests.get(url=stats_api).json().items():
             for metric, value in stats.items():
-                if isinstance(value, int):
+                if type(value) == int:  # can't use isinstance because of bool
                     yield metric, value
 
     def update_metadata(self):
