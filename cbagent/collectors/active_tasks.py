@@ -7,7 +7,6 @@ class ActiveTasks(Collector):
 
     def __init__(self, settings):
         super(ActiveTasks, self).__init__(settings)
-        self.pointers = list()
         self.update_metadata_enabled = settings.update_metadata
 
     def update_metadata(self):
@@ -55,10 +54,7 @@ class ActiveTasks(Collector):
                 yield metric, value, bucket
 
     def _append(self, metric, value, bucket=None, server=None):
-        pointer = hash((metric, bucket, server))
-        if pointer not in self.pointers and self.update_metadata_enabled:
-            self.pointers.append(pointer)
-            self.mc.add_metric(metric, bucket, server, collector=self.COLLECTOR)
+        self._update_metric_metadata(metric, bucket, server)
 
         data = {metric: value}
         self.store.append(data, cluster=self.cluster, bucket=bucket,

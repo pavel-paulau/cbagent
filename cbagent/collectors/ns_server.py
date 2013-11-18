@@ -27,17 +27,10 @@ class NSServer(Collector):
     def sample(self):
         for uri, bucket, host in self._get_stats_uri():
             stats = self._get_stats(uri)
+            for metric in stats:
+                self._update_metric_metadata(metric.replace('/', '_'),
+                                             bucket, host)
             self.store.append(stats, self.cluster, host, bucket, self.COLLECTOR)
-
-    def _get_metrics(self):
-        nodes = list(self.get_nodes())
-        for bucket, stats in self.get_buckets(with_stats=True):
-            stats_directory = self.get_http(path=stats["directoryURI"])
-            for block in stats_directory["blocks"]:
-                for metric in block["stats"]:
-                    yield metric["name"], bucket, None, metric["desc"]
-                    for node in nodes:
-                        yield metric["name"], bucket, node, metric["desc"]
 
     def update_metadata(self):
         self.mc.add_cluster()
@@ -47,8 +40,3 @@ class NSServer(Collector):
 
         for node in self.get_nodes():
             self.mc.add_server(node)
-
-        for metric, bucket, node, desc in self._get_metrics():
-            metric = metric.replace('/', '_')
-            self.mc.add_metric(metric, bucket=bucket, server=node,
-                               description=desc, collector=self.COLLECTOR)

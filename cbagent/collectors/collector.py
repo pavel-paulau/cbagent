@@ -11,6 +11,8 @@ from cbagent.metadata_client import MetadataClient
 
 class Collector(object):
 
+    COLLECTOR = None
+
     def __init__(self, settings):
         self.interval = settings.interval
         self.nodes = []
@@ -24,6 +26,8 @@ class Collector(object):
         self.store = SerieslyStore(settings.seriesly_host)
         self.mc = MetadataClient(settings)
 
+        self.metrics = set()
+
     def get_http(self, path, server=None, port=8091):
         server = server or self.master_node
         url = "http://{0}:{1}{2}".format(server, port, path)
@@ -34,7 +38,7 @@ class Collector(object):
             else:
                 logger.warn("Bad response: {0}".format(url))
                 return self.retry(path, server, port)
-        except requests.exceptions.ConnectionError:
+        except requests.ConnectionError:
             logger.warn("Connection error: {0}".format(url))
             return self.retry(path, server, port)
 
@@ -77,6 +81,12 @@ class Collector(object):
         pool = self.get_http(path="/pools/default")
         for node in pool["nodes"]:
             yield node["hostname"].split(":")[0]
+
+    def _update_metric_metadata(self, metric, bucket=None, server=None):
+        metric_hash = hash((metric, bucket, server))
+        if metric_hash not in self.metrics:
+            self.metrics.add(metric_hash)
+            self.mc.add_metric(metric, bucket, server, collector=self.COLLECTOR)
 
     def sample(self):
         raise NotImplementedError
