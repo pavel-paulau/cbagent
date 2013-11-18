@@ -7,8 +7,7 @@ def main():
     settings.read_cfg()
 
     collector = XdcrLag(settings)
-    if settings.update_metadata:
-        collector.update_metadata()
+    collector.update_metadata()
     collector.collect()
 
 if __name__ == '__main__':

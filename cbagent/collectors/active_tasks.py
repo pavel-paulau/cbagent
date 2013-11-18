@@ -5,10 +5,6 @@ class ActiveTasks(Collector):
 
     COLLECTOR = "active_tasks"
 
-    def __init__(self, settings):
-        super(ActiveTasks, self).__init__(settings)
-        self.update_metadata_enabled = settings.update_metadata
-
     def update_metadata(self):
         self.mc.add_cluster()
 

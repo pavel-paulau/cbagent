@@ -11,7 +11,6 @@ class DefaultSettings(dict):
 
         self.interval = 10
         self.seriesly_host = "127.0.0.1"
-        self.update_metadata = False
 
         self.cluster = "default"
         self.master_node = "127.0.0.1"
@@ -47,7 +46,6 @@ class Settings(DefaultSettings):
 
             self.interval = config.getint("store", "interval")
             self.seriesly_host = config.get("store", "host")
-            self.update_metadata = config.getboolean("store", "update_metadata")
 
             self.cluster = config.get("target", "cluster")
             self.master_node = config.get("target", "master_node")

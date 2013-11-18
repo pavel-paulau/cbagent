@@ -54,10 +54,6 @@ seriesly database address:
 
     seriesly_host  # e.g., "127.0.0.1"
 
-Boolean parameter that allows to skip metadata updates:
-
-    update_metadata  # True or False
-
 Polling interval:
 
     interval  # e.g., 10
@@ -140,8 +136,7 @@ Let's consider wrapper for ns_server stats collection:
         settings.read_cfg()
 
         collector = NSServer(settings)
-        if settings.update_metadata:
-            collector.update_metadata()
+        collector.update_metadata()
         collector.collect()
 
     if __name__ == '__main__':
