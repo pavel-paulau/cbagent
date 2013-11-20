@@ -95,8 +95,8 @@ class Collector(object):
         while True:
             try:
                 self.sample()
-                time.sleep(self.interval)
             except KeyboardInterrupt:
                 sys.exit()
             except Exception as e:
                 logger.warn(e)
+            time.sleep(self.interval)
