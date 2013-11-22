@@ -26,6 +26,8 @@ class SyncGateway(Collector):
             for metric, value in stats.items():
                 if type(value) == int:  # can't use isinstance because of bool
                     yield metric, value
+                if metric == "PauseNs":
+                    yield metric, filter(lambda v: v, value)[-1]
 
     def update_metadata(self):
         self.mc.add_cluster()
