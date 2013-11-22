@@ -12,13 +12,16 @@ class PS(Collector):
         super(PS, self).__init__(settings)
         self.ssh_username = settings.ssh_username
         self.ssh_password = settings.ssh_password
-        self.ps = PSStats(hosts=tuple(self.get_nodes()),
+        self.nodes = list(self.get_nodes())
+        if settings.sync_gateway_nodes:
+            self.nodes += settings.sync_gateway_nodes
+        self.ps = PSStats(hosts=self.nodes,
                           user=settings.ssh_username,
                           password=settings.ssh_password)
 
     def update_metadata(self):
         self.mc.add_cluster()
-        for node in self.get_nodes():
+        for node in self.nodes:
             self.mc.add_server(node)
 
     def sample(self):
