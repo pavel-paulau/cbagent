@@ -20,6 +20,7 @@ class DefaultSettings(dict):
         self.rest_password = "password"
         self.ssh_username = "root"
         self.ssh_password = "couchbase"
+        self.partitions = {}
 
 
 class Settings(DefaultSettings):
