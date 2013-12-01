@@ -11,15 +11,17 @@ class ActiveTasks(Collector):
             self.mc.add_bucket(bucket)
 
     def _get_tasks(self):
-        tasks = {
-            "bucket_compaction_progress": (0, None),
-            "rebalance_progress": (0, None)
-        }
+        bucket_compaction_tasks = {}
+
         for task in self.get_http(path="/pools/default/tasks"):
-            _task = "{0}_progress".format(task["type"])
-            tasks[_task] = (task.get("progress", 0), task.get("bucket", None))
-        for task, (progress, bucket) in tasks.items():
-            yield task, progress, bucket
+            if task["type"] == "bucket_compaction":
+                bucket_compaction_tasks[task["bucket"]] = task["progress"]
+            elif task["type"] == "rebalance":
+                yield "rebalance_progress", task.get("progress", 0), None
+
+        for bucket in self.get_buckets():
+            progress = bucket_compaction_tasks.get(bucket, 0)
+            yield "bucket_compaction_progress", progress, bucket
 
     def sample(self):
         for task, progress, bucket in self._get_tasks():
