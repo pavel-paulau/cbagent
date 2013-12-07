@@ -18,9 +18,9 @@ class SyncGateway(Collector):
 
         self.nodes = settings.sync_gateway_nodes
         self.stats_api = "http://{0}:4985/_stats"
+        self.prev_pause_total = None
 
-    @staticmethod
-    def _fetch_stats(node):
+    def _fetch_stats(self, node):
         stats_api = "http://{0}:4985/_stats".format(node)
         for _, stats in requests.get(url=stats_api).json().items():
             for metric, value in stats.items():
@@ -28,6 +28,11 @@ class SyncGateway(Collector):
                     yield metric, value
                 if metric == "PauseNs":
                     yield metric, filter(lambda v: v, value)[-1]
+                if metric == "PauseTotalNs":
+                        pause = value - (self.prev_pause_total or value)
+                        pause_pct = 100.0 * pause / 10 ** 9 / self.interval
+                        self.prev_pause_total = value
+                        yield "PausesPct", pause_pct
 
     def update_metadata(self):
         self.mc.add_cluster()
