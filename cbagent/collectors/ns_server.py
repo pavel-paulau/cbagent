@@ -27,10 +27,10 @@ class NSServer(Collector):
     def sample(self):
         for uri, bucket, host in self._get_stats_uri():
             stats = self._get_stats(uri)
+            self.store.append(stats, self.cluster, host, bucket, self.COLLECTOR)
             for metric in stats:
                 self._update_metric_metadata(metric.replace('/', '_'),
                                              bucket, host)
-            self.store.append(stats, self.cluster, host, bucket, self.COLLECTOR)
 
     def update_metadata(self):
         self.mc.add_cluster()
