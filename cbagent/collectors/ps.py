@@ -28,8 +28,7 @@ class PS(Collector):
         for process in self.KNOWN_PROCESSES:
             for node, stats in self.ps.get_samples(process).items():
                 if stats:
-                    for title in stats:
-                        self._update_metric_metadata(title, server=node)
+                    self.update_metric_metadata(stats.keys(), server=node)
                     self.store.append(stats,
                                       cluster=self.cluster, server=node,
                                       collector=self.COLLECTOR)

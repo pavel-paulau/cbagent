@@ -24,8 +24,7 @@ class IO(Collector):
     def sample(self):
         for node, stats in self.io.get_samples(self.partitions).items():
             if stats:
-                for title in stats:
-                    self._update_metric_metadata(title, server=node)
+                self.update_metric_metadata(stats.keys(), server=node)
                 self.store.append(stats,
                                   cluster=self.cluster, server=node,
                                   collector=self.COLLECTOR)

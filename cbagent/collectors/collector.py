@@ -1,6 +1,7 @@
 import socket
 import sys
 import time
+from threading import Thread
 
 import requests
 from logger import logger
@@ -27,6 +28,7 @@ class Collector(object):
         self.mc = MetadataClient(settings)
 
         self.metrics = set()
+        self.updater = None
 
     def get_http(self, path, server=None, port=8091):
         server = server or self.master_node
@@ -82,11 +84,21 @@ class Collector(object):
         for node in pool["nodes"]:
             yield node["hostname"].split(":")[0]
 
-    def _update_metric_metadata(self, metric, bucket=None, server=None):
-        metric_hash = hash((metric, bucket, server))
-        if metric_hash not in self.metrics:
-            self.metrics.add(metric_hash)
-            self.mc.add_metric(metric, bucket, server, collector=self.COLLECTOR)
+    def _update_metric_metadata(self, metrics, bucket=None, server=None):
+        for metric in metrics:
+            metric = metric.replace('/', '_')
+            metric_hash = hash((metric, bucket, server))
+            if metric_hash not in self.metrics:
+                self.metrics.add(metric_hash)
+                self.mc.add_metric(metric, bucket, server, self.COLLECTOR)
+
+    def update_metric_metadata(self, *args, **kwargs):
+        if self.updater is None or not self.updater.is_alive():
+            self.updater = Thread(
+                target=self._update_metric_metadata, args=args, kwargs=kwargs
+            )
+            self.updater.daemon = True
+            self.updater.start()
 
     def sample(self):
         raise NotImplementedError
