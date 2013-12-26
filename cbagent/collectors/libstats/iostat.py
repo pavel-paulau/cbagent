@@ -19,13 +19,13 @@ class IOstat(RemoteStats):
 
     def get_device_name(self, partition):
         stdout = run(
-            "mount | grep '{0} '".format(partition)
+            "mount | grep '{} '".format(partition)
         )
         return stdout.split()[0]
 
     def get_iostat(self, device):
         stdout = run(
-            "iostat -xk 1 2 {0} | grep -v '^$' | tail -n 2".format(device)
+            "iostat -xk 1 2 {} | grep -v '^$' | tail -n 2".format(device)
         )
         stdout = stdout.split()
         header = stdout[:len(stdout)/2]
@@ -42,6 +42,6 @@ class IOstat(RemoteStats):
             device = self.get_device_name(partition)
             data = self.get_iostat(device)
             for shorthand, metric, multiplier in self.METRICS:
-                key = "{0}_{1}".format(purpose, shorthand)
+                key = "{}_{}".format(purpose, shorthand)
                 samples[key] = float(data[metric]) * multiplier
         return samples

@@ -37,11 +37,11 @@ class Settings(DefaultSettings):
 
         config = ConfigParser()
         try:
-            logger.info("Reading configuration file: {0}".format(args.config))
+            logger.info("Reading configuration file: {}".format(args.config))
             config.read(args.config)
             logger.info("Configuration file successfully parsed")
         except Exception as e:
-            logger.interrupt("Failed to parse config file: {0}".format(e))
+            logger.interrupt("Failed to parse config file: {}".format(e))
         try:
             self.cbmonitor_host_port = config.get("cbmonitor", "host_port")
 
@@ -55,7 +55,7 @@ class Settings(DefaultSettings):
             self.ssh_username = config.get("target", "ssh_username")
             self.ssh_password = config.get("target", "ssh_password")
         except NoOptionError as e:
-            logger.interrupt("Failed to get option from config: {0}".format(e))
+            logger.interrupt("Failed to get option from config: {}".format(e))
         try:
             self.dest_master_node = config.get("target", "dest_master_node")
         except NoOptionError:

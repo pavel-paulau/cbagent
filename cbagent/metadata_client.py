@@ -9,7 +9,7 @@ class InternalServerError(Exception):
         self.url = url
 
     def __str__(self):
-        return "Internal server error: {0}".format(self.url)
+        return "Internal server error: {}".format(self.url)
 
 
 @decorator
@@ -40,7 +40,7 @@ class MetadataClient(RestClient):
 
     def __init__(self, settings):
         self.settings = settings
-        self.base_url = "http://{0}/cbmonitor".format(
+        self.base_url = "http://{}/cbmonitor".format(
             settings.cbmonitor_host_port)
 
     def get_clusters(self):
@@ -64,7 +64,7 @@ class MetadataClient(RestClient):
         url = self.base_url + "/add_cluster/"
         data = {"name": self.settings.cluster}
 
-        logger.info("Adding cluster: {0}".format(self.settings.cluster))
+        logger.info("Adding cluster: {}".format(self.settings.cluster))
         self.post(url, data)
 
     def add_server(self, address):
@@ -74,21 +74,21 @@ class MetadataClient(RestClient):
         url = self.base_url + "/add_server/"
         data = {"address": address, "cluster": self.settings.cluster}
 
-        logger.info("Adding server: {0}".format(address))
+        logger.info("Adding server: {}".format(address))
         self.post(url, data)
 
     def add_bucket(self, name):
         if name in self.get_buckets():
             return
 
-        logger.info("Adding bucket: {0}".format(name))
+        logger.info("Adding bucket: {}".format(name))
 
         url = self.base_url + "/add_bucket/"
         data = {"name": name, "cluster": self.settings.cluster}
         self.post(url, data)
 
     def add_metric(self, name, bucket=None, server=None, collector=None):
-        logger.debug("Adding metric: {0}".format(name))
+        logger.debug("Adding metric: {}".format(name))
 
         url = self.base_url + "/add_metric/"
         data = {"name": name, "cluster": self.settings.cluster}
@@ -98,7 +98,7 @@ class MetadataClient(RestClient):
         self.post(url, data)
 
     def add_snapshot(self, name, ts_from, ts_to):
-        logger.info("Adding snapshot: {0}".format(name))
+        logger.info("Adding snapshot: {}".format(name))
 
         url = self.base_url + "/add_snapshot/"
         data = {"cluster": self.settings.cluster, "name": name,

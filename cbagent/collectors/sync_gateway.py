@@ -17,11 +17,11 @@ class SyncGateway(Collector):
         self.mc = MetadataClient(settings)
 
         self.nodes = settings.sync_gateway_nodes
-        self.stats_api = "http://{0}:4985/_stats"
+        self.stats_api = "http://{}:4985/_stats"
         self.prev_pause_total = None
 
     def _fetch_stats(self, node):
-        stats_api = "http://{0}:4985/_stats".format(node)
+        stats_api = "http://{}:4985/_stats".format(node)
         for _, stats in requests.get(url=stats_api).json().items():
             for metric, value in stats.items():
                 if type(value) == int:  # can't use isinstance because of bool

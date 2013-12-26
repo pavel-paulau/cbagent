@@ -11,7 +11,7 @@ visualization and report generation.
 Prerequisites
 -------------
 
-* Python 2.6 or 2.7
+* Python 2.7
 * pip or equivalent
 * libcouchbase
 

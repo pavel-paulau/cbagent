@@ -10,10 +10,10 @@ class AtopStats(RemoteStats):
 
     def __init__(self, hosts, user, password):
         super(AtopStats, self).__init__(hosts, user, password)
-        self.logfile = "/tmp/{0}.atop".format(uuid4().hex)
+        self.logfile = "/tmp/{}.atop".format(uuid4().hex)
 
         self._base_cmd =\
-            "d=`date +%H:%M` && atop -r {0} -b $d -e $d".format(self.logfile)
+            "d=`date +%H:%M` && atop -r {} -b $d -e $d".format(self.logfile)
 
     @multi_node_task
     def stop_atop(self):
@@ -22,7 +22,7 @@ class AtopStats(RemoteStats):
 
     @multi_node_task
     def start_atop(self):
-        run("nohup atop -a -w {0} 5 > /dev/null 2>&1 &".format(self.logfile),
+        run("nohup atop -a -w {} 5 > /dev/null 2>&1 &".format(self.logfile),
             pty=False)
 
     @single_node_task
@@ -61,17 +61,17 @@ class AtopStats(RemoteStats):
     @multi_node_task
     def get_process_cpu(self, process):
         title = process + "_cpu"
-        cmd = "{0} | grep {1}".format(self._base_cmd, process)
+        cmd = "{} | grep {}".format(self._base_cmd, process)
         return title, self._get_metric(cmd, self._cpu_column)
 
     @multi_node_task
     def get_process_vsize(self, process):
         title = process + "_vsize"
-        cmd = "{0} -m | grep {1}".format(self._base_cmd, process)
+        cmd = "{} -m | grep {}".format(self._base_cmd, process)
         return title, self._get_metric(cmd, self._vsize_column)
 
     @multi_node_task
     def get_process_rss(self, process):
         title = process + "_rss"
-        cmd = "{0} -m | grep {1}".format(self._base_cmd, process)
+        cmd = "{} -m | grep {}".format(self._base_cmd, process)
         return title, self._get_metric(cmd, self._rss_column)

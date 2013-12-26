@@ -32,16 +32,16 @@ class Collector(object):
 
     def get_http(self, path, server=None, port=8091):
         server = server or self.master_node
-        url = "http://{0}:{1}{2}".format(server, port, path)
+        url = "http://{}:{}{}".format(server, port, path)
         try:
             r = requests.get(url=url, auth=self.auth)
             if r.status_code in (200, 201, 202):
                 return r.json()
             else:
-                logger.warn("Bad response: {0}".format(url))
+                logger.warn("Bad response: {}".format(url))
                 return self.retry(path, server, port)
         except requests.ConnectionError:
-            logger.warn("Connection error: {0}".format(url))
+            logger.warn("Connection error: {}".format(url))
             return self.retry(path, server, port)
 
     def retry(self, path, server=None, port=8091):
@@ -54,7 +54,7 @@ class Collector(object):
         else:
             logger.interrupt("Failed to find at least one node")
         if server not in self.nodes:
-            raise RuntimeError("Bad node {0}".format(server or ""))
+            raise RuntimeError("Bad node {}".format(server or ""))
         else:
             return self.get_http(path, server, port)
 

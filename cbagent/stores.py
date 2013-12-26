@@ -32,10 +32,10 @@ class SerieslyStore(object):
         try:
             existing_dbs = self.seriesly.list_dbs()
         except ConnectionError as e:
-            logger.interrupt("seriesly not available: {0}".format(e))
+            logger.interrupt("seriesly not available: {}".format(e))
         else:
             if db_name not in existing_dbs:
-                logger.info("Creating new database: {0}".format(db_name))
+                logger.info("Creating new database: {}".format(db_name))
                 self.seriesly.create_db(db_name)
             return self.seriesly[db_name]
 

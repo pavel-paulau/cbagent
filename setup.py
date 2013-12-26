@@ -1,6 +1,6 @@
 from setuptools import setup
 
-version = '1.11.10'
+version = '1.12.0'
 
 setup(
     name='cbagent',
@@ -26,7 +26,6 @@ setup(
     },
     include_package_data=True,
     install_requires=[
-        'argparse',
         'couchbase==1.1.0',
         'decorator',
         'eventlet==0.12.1',
