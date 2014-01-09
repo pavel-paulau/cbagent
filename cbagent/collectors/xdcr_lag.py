@@ -1,14 +1,13 @@
 import sys
-from Queue import Queue, Empty
 from time import time, sleep
 from threading import Thread
 from uuid import uuid4
 
-from couchbase import Couchbase
 from couchbase.user_constants import OBS_PERSISTED
 from logger import logger
 
 from cbagent.collectors import Latency
+from cbagent.collectors.libstats.pool import Pool
 
 uhex = lambda: uuid4().hex
 
@@ -24,17 +23,16 @@ class XdcrLag(Latency):
     def __init__(self, settings):
         super(Latency, self).__init__(settings)
 
-        self.clients = []
+        self.pools = []
         for bucket in self.get_buckets():
-            src_client = Couchbase.connect(
+            src_pool = Pool(
                 bucket=bucket,
                 host=settings.master_node,
                 username=bucket,
                 password=settings.rest_password,
                 quiet=True,
-                unlock_gil=False,
             )
-            dst_client = Couchbase.connect(
+            dst_pool = Pool(
                 bucket=bucket,
                 host=settings.dest_master_node,
                 username=bucket,
@@ -42,12 +40,13 @@ class XdcrLag(Latency):
                 quiet=True,
                 unlock_gil=False,
             )
-            self.clients.append((src_client, dst_client))
-
-        self.queue = Queue(maxsize=self.NUM_THREADS)
+            self.pools.append((bucket, src_pool, dst_pool))
 
     @staticmethod
-    def _measure_lags(src_client, dst_client):
+    def _measure_lags(src_pool, dst_pool):
+        src_client = src_pool.get_client()
+        dst_client = dst_pool.get_client()
+
         key = "xdcr_track_{}".format(uhex())
 
         t0 = time()
@@ -69,6 +68,9 @@ class XdcrLag(Latency):
 
         src_client.delete(key)
 
+        src_pool.release_client(src_client)
+        dst_pool.release_client(dst_client)
+
         return {
             "xdcr_lag": (t2 - t0) * 1000,
             "xdcr_persistence_time": (t1 - t0) * 1000,
@@ -76,31 +78,18 @@ class XdcrLag(Latency):
         }
 
     def sample(self):
-        for src_client, dst_client in self.clients:
-            lags = self._measure_lags(src_client, dst_client)
-            self.store.append(lags, cluster=self.cluster,
-                              bucket=src_client.bucket,
-                              collector=self.COLLECTOR)
-
-    def _collect(self):
         while True:
             try:
-                self.sample()
+                for bucket, src_pool, dst_pool in self.pools:
+                    lags = self._measure_lags(src_pool, dst_pool)
+                    self.store.append(lags,
+                                      cluster=self.cluster,
+                                      bucket=bucket,
+                                      collector=self.COLLECTOR)
             except Exception as e:
                 logger.warn(e)
-            try:
-                self.queue.get(timeout=1)
-            except Empty:
-                return
 
     def collect(self):
-        map(lambda _: self.queue.put(None), range(self.NUM_THREADS))
-        for _ in range(self.NUM_THREADS):
-            Thread(target=self._collect).start()
-
-        while True:
-            try:
-                if not self.queue.full():
-                    self.queue.put(None, block=True)
-            except KeyboardInterrupt:
-                sys.exit()
+        threads = [Thread(target=self.sample) for x in range(self.NUM_THREADS)]
+        map(lambda t: t.start(), threads)
+        map(lambda t: t.join(), threads)
