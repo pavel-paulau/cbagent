@@ -1,4 +1,3 @@
-import sys
 from time import time, sleep
 from threading import Thread
 from uuid import uuid4
@@ -90,6 +89,6 @@ class XdcrLag(Latency):
                 logger.warn(e)
 
     def collect(self):
-        threads = [Thread(target=self.sample) for x in range(self.NUM_THREADS)]
+        threads = [Thread(target=self.sample) for _ in range(self.NUM_THREADS)]
         map(lambda t: t.start(), threads)
         map(lambda t: t.join(), threads)
