@@ -22,6 +22,8 @@ class Collector(object):
         self.master_node = settings.master_node
         self.auth = (settings.rest_username, settings.rest_password)
 
+        self.buckets = settings.buckets
+        self.hostnames = settings.hostnames
         self.nodes = list(self.get_nodes())
 
         self.store = SerieslyStore(settings.seriesly_host)
@@ -74,6 +76,8 @@ class Collector(object):
         if not buckets:
             buckets = self.retry(path="/pools/default/buckets")
         for bucket in buckets:
+            if self.buckets is not None and bucket not in self.buckets:
+                continue
             if with_stats:
                 yield bucket["name"], bucket["stats"]
             else:
@@ -82,7 +86,10 @@ class Collector(object):
     def get_nodes(self):
         pool = self.get_http(path="/pools/default")
         for node in pool["nodes"]:
-            yield node["hostname"].split(":")[0]
+            hostname = node["hostname"].split(":")[0]
+            if self.hostnames is not None and hostname not in self.hostnames:
+                continue
+            yield hostname
 
     def _update_metric_metadata(self, metrics, bucket=None, server=None):
         for metric in metrics:

@@ -16,7 +16,7 @@ class SyncGateway(Collector):
         self.store = SerieslyStore(settings.seriesly_host)
         self.mc = MetadataClient(settings)
 
-        self.nodes = settings.sync_gateway_nodes
+        self.nodes = settings.nodes
         self.stats_api = "http://{}:4985/_stats"
         self.prev_pause_total = None
 

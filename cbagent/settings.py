@@ -20,7 +20,10 @@ class Settings(object):
         "rest_password": "password",
         "ssh_username": "root",
         "ssh_password": "couchbase",
-        "partitions": {}
+        "partitions": {},
+
+        "buckets": None,
+        "nodes": None
     }
 
     def __init__(self, options={}):

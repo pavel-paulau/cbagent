@@ -68,6 +68,14 @@ Cluster specification:
 Notice that master_node parameter is dynamic, most collectors update it during
 stats collection.
 
+Optionally it's possible to restrict list of buckets and hostnames used for
+stats collection:
+
+    "buckets": ["bucket-1"]
+    "hostnames": []
+
+Empty list will disallow stats collection for given domain (bucket/server).
+
 Some collectors like atop collector require additional parameters, for instance:
 
     ssh_username  # e.g., "root"
