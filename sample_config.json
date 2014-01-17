@@ -1,0 +1,13 @@
+{
+    "cbmonitor_host_port": "127.0.0.1:8000",
+    "seriesly_host": "127.0.0.1",
+
+    "interval": 10,
+
+    "cluster": "default",
+    "master_node": "127.0.0.1",
+    "rest_username": "Administrator",
+    "rest_password": "password",
+    "ssh_username": "root",
+    "ssh_password": "couchbase"
+}

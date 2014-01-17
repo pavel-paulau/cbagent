@@ -48,22 +48,22 @@ Regardless implementation any collector instance is initialized with settings
 object. It could be any arbitrary Python object with a set of predefined
 attributes. They include cbmonitor address:
 
-    cbmonitor_host_port  # e.g., "127.0.0.1:8000"
+    "cbmonitor_host_port"  # e.g., "127.0.0.1:8000"
 
 seriesly database address:
 
-    seriesly_host  # e.g., "127.0.0.1"
+    "seriesly_host"  # e.g., "127.0.0.1"
 
 Polling interval:
 
-    interval  # e.g., 10
+    "interval"  # e.g., 10
 
 Cluster specification:
 
-    cluster = "default"
-    master_node = "127.0.0.1"
-    rest_username = "Administrator"
-    rest_password = "password"
+    "cluster": "default"
+    "master_node": "127.0.0.1"
+    "rest_username": "Administrator"
+    "rest_password": "password"
 
 Notice that master_node parameter is dynamic, most collectors update it during
 stats collection.
@@ -73,8 +73,8 @@ Some collectors like atop collector require additional parameters, for instance:
     ssh_username  # e.g., "root"
     ssh_password  # e.g., "couchbase"
 
-CLI wrappers read all these parameters from configuration files. See
-``sample.cfg`` for details.
+CLI wrappers read all these parameters from JSON configuration files. See
+``sample_config.json`` for details.
 
 Metadata client
 ---------------
@@ -168,12 +168,12 @@ Install required packages:
 
 Now you can run CLI wrappers:
 
-    $ python -m cbagent.cli_wrappers.ns_collector sample.cfg
+    $ python -m cbagent.cli_wrappers.ns_collector sample_config.json
 
 alternatively:
 
     $ python setup.py install
-    $ ns_collector sample.cfg
+    $ ns_collector sample_config.json
 
 Integrating cbagent
 -------------------
