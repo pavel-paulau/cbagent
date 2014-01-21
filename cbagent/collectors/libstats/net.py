@@ -16,8 +16,8 @@ class NetStat(RemoteStats):
         s1 = [int(v.split(":")[-1]) for v in s1.split()]
         s2 = [int(v.split(":")[-1]) for v in s2.split()]
         return {
-            "total_bytes_per_sec": s2[1] + s2[9] - s1[1] - s1[9],
-            "total_packets_per_sec": s2[2] + s2[10] - s1[2] - s1[10],
+            "total_bytes_per_sec": s2[0] + s2[8] - s1[0] - s1[8],
+            "total_packets_per_sec": s2[1] + s2[9] - s1[1] - s1[9],
         }
 
     @staticmethod
