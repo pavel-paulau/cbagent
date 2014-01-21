@@ -4,6 +4,7 @@ from atop import Atop
 from iostat import IO
 from latency import Latency
 from observe import ObserveLatency
+from net import Net
 from ns_server import NSServer
 from ps import PS
 from spring_latency import SpringLatency, SpringQueryLatency
