@@ -23,7 +23,7 @@ class Settings(object):
         "partitions": {},
 
         "buckets": None,
-        "nodes": None
+        "hostnames": None
     }
 
     def __init__(self, options={}):
