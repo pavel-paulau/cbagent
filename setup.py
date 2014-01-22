@@ -21,7 +21,6 @@ setup(
     install_requires=[
         'couchbase==1.2.0',
         'decorator',
-        'eventlet==0.12.1',
         'fabric==1.8.0',
         'logger',
         'requests==2.1.0',

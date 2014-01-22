@@ -1,7 +1,6 @@
 couchbase==1.2.0
 coverage
 decorator
-eventlet==0.12.1
 fabric==1.8.0
 logger
 mock
