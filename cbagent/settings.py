@@ -1,6 +1,5 @@
 import json
 import os
-from argparse import ArgumentParser
 
 from logger import logger
 
@@ -30,16 +29,12 @@ class Settings(object):
         for option, value in dict(self.DEFAULT, **options).items():
             setattr(self, option, value)
 
-    def read_cfg(self):
-        parser = ArgumentParser()
-        parser.add_argument("config", help="name of configuration file")
-        args = parser.parse_args()
+    def read_cfg(self, config):
+        if not os.path.isfile(config):
+            logger.interrupt("File doesn\'t exist: {}".format(config))
 
-        if not os.path.isfile(args.config):
-            logger.interrupt("File doesn\'t exist: {}".format(args.config))
-
-        logger.info("Reading configuration file: {}".format(args.config))
-        with open(args.config) as fh:
+        logger.info("Reading configuration file: {}".format(config))
+        with open(config) as fh:
             try:
                 for option, value in json.load(fh).items():
                     setattr(self, option, value)

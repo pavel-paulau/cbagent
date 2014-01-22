@@ -22,6 +22,25 @@ Installation
 
     $ pip install cbagent
 
+Usage
+-----
+
+    Usage: cbagent [options]
+
+    Options:
+      -h, --help  show this help message and exit
+      --at        Active tasks
+      --io        iostat
+      --l         Latency
+      --o         Observe latency
+      --n         Net
+      --ns        ns_server
+      --ps        ps CPU, RSS and VSIZE
+      --sg        Sync Gateway
+      --x         XDCR lag
+
+Only one flag may be selected at a time.
+
 Project structure
 -----------------
 
@@ -39,7 +58,7 @@ Top-level project components:
 * store objects
 * metadata client for interaction with cbmonitor
 * sub-package with collectors
-* sub-package with CLI wrappers
+* main CLI routine
 
 Settings
 --------
@@ -131,35 +150,7 @@ Every collector instance embeds store and metadata client objects (see above).
 There is a convention to list implemented collectors in __init__ module of the
 package. It significantly simplifies imports in 3rd party applications.
 
-CLI wrappers
-------------
-
-Let's consider wrapper for ns_server stats collection:
-
-    from cbagent.collectors import NSServer
-    from cbagent.settings import Settings
-
-    def main():
-        settings = Settings()
-        settings.read_cfg()
-
-        collector = NSServer(settings)
-        collector.update_metadata()
-        collector.collect()
-
-    if __name__ == '__main__':
-        main()
-
-
-It reflects general workflow of any stats collector. Creating settings object
-followed by collector initialization, optional metadata updates and infinite
-stats collection loop (until KeyboardInterrupt raised, see collector module for
-details).
-
-CLI wrappers must be specified in setup.py script as entry moint. Otherwise it
-won't be added to environment PATH after **cbagent** installation.
-
-Running CLI wrappers in development mode
+Running CLI tool in development mode
 ----------------------------------------
 
 First of all create vitrual environment:
@@ -174,21 +165,14 @@ Install required packages:
 
     $ pip -r requirements.txt
 
-Now you can run CLI wrappers:
+Now you can run CLI tool:
 
-    $ python -m cbagent.cli_wrappers.ns_collector sample_config.json
-
-alternatively:
-
-    $ python setup.py install
-    $ ns_collector sample_config.json
+    $ python -m cbagent --ns sample_config.json
 
 Integrating cbagent
 -------------------
 
-CLI wrappers is a great example of **cbagent** integration. Any Python
-application can easily utilize this pattern. For instance, perfrunner project
-(performance test framework) has a
+perfrunner project (performance test automation framework) has a
 [helper](https://github.com/pavel-paulau/perfrunner/blob/master/perfrunner/helpers/cbmonitor.py)
 for stats collection using cbagent.
 
