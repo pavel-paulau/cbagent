@@ -53,9 +53,9 @@ class SpringQueryLatency(SpringLatency):
 
     METRICS = ("latency_query", )
 
-    def __init__(self, settings, workload, ddocs, prefix=None):
+    def __init__(self, settings, workload, ddocs, params, prefix=None):
         super(SpringQueryLatency, self).__init__(settings, workload, prefix)
-        self.new_queries = NewQuery(ddocs)
+        self.new_queries = NewQuery(ddocs, params)
 
     def measure(self, client, metric):
         key = self.existing_keys.next(curr_items=self.items, curr_deletes=0)
