@@ -22,15 +22,18 @@ def interrupt(request, *args, **kargs):
 
 class RestClient(object):
 
+    def __init__(self):
+        self.session = requests.Session()
+
     @interrupt
     def post(self, url, data):
-        r = requests.post(url=url, data=data)
+        r = self.session.post(url=url, data=data)
         if r.status_code == 500:
             raise InternalServerError(url)
 
     @interrupt
     def get(self, url, params):
-        r = requests.get(url=url, params=params)
+        r = self.session.get(url=url, params=params)
         if r.status_code == 500:
             raise InternalServerError(url)
         return r.json()

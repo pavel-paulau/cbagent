@@ -32,11 +32,13 @@ class Collector(object):
         self.metrics = set()
         self.updater = None
 
+        self.session = requests.Session()
+
     def get_http(self, path, server=None, port=8091):
         server = server or self.master_node
         url = "http://{}:{}{}".format(server, port, path)
         try:
-            r = requests.get(url=url, auth=self.auth)
+            r = self.session.get(url=url, auth=self.auth)
             if r.status_code in (200, 201, 202):
                 return r.json()
             else:
