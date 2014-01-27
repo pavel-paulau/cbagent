@@ -15,6 +15,8 @@ class Collector(object):
     COLLECTOR = None
 
     def __init__(self, settings):
+        self.session = requests.Session()
+
         self.interval = settings.interval
         self.nodes = []
 
@@ -31,8 +33,6 @@ class Collector(object):
 
         self.metrics = set()
         self.updater = None
-
-        self.session = requests.Session()
 
     def get_http(self, path, server=None, port=8091):
         server = server or self.master_node

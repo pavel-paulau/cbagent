@@ -42,6 +42,7 @@ class RestClient(object):
 class MetadataClient(RestClient):
 
     def __init__(self, settings):
+        super(MetadataClient, self).__init__()
         self.settings = settings
         self.base_url = "http://{}/cbmonitor".format(
             settings.cbmonitor_host_port)
