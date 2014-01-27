@@ -25,7 +25,7 @@ Installation
 Usage
 -----
 
-    Usage: cbagent [options]
+    Usage: cbagent [options] config.json
 
     Options:
       -h, --help  show this help message and exit
