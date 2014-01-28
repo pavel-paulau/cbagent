@@ -21,6 +21,10 @@ class ObserveLatency(Latency):
 
     MAX_POLLING_INTERVAL = 1
 
+    INITIAL_REQUEST_INTERVAL = 0.01
+
+    MAX_REQUEST_INTERVAL = 2
+
     def __init__(self, settings):
         super(Latency, self).__init__(settings)
 
@@ -40,14 +44,16 @@ class ObserveLatency(Latency):
 
         key = uhex()
 
-        t0 = time()
+        req_interval = self.INITIAL_REQUEST_INTERVAL
         client.set(key, key)
+        t0 = time()
         while True:
             r = client.observe(key)
             if r.value[0].flags == OBS_PERSISTED:
                 break
             else:
-                sleep(0.01)
+                sleep(req_interval)
+            req_interval = min(req_interval * 2, self.MAX_REQUEST_INTERVAL)
         t1 = time()
         latency = (t1 - t0) * 1000  # s -> ms
         sleep_time = max(0, self.MAX_POLLING_INTERVAL - (t1 - t0))

@@ -18,6 +18,10 @@ class XdcrLag(Latency):
 
     NUM_THREADS = 10
 
+    INITIAL_REQUEST_INTERVAL = 0.01
+
+    MAX_REQUEST_INTERVAL = 2
+
     def __init__(self, settings):
         super(Latency, self).__init__(settings)
 
@@ -40,13 +44,13 @@ class XdcrLag(Latency):
             )
             self.pools.append((bucket, src_pool, dst_pool))
 
-    @staticmethod
-    def _measure_lags(src_pool, dst_pool):
+    def _measure_lags(self, src_pool, dst_pool):
         src_client = src_pool.get_client()
         dst_client = dst_pool.get_client()
 
         key = "xdcr_track_{}".format(uhex())
 
+        req_interval = self.INITIAL_REQUEST_INTERVAL
         src_client.set(key, key)
         t0 = time()
         while True:
@@ -54,7 +58,8 @@ class XdcrLag(Latency):
             if r.value:
                 break
             else:
-                sleep(0.05)
+                sleep(req_interval)
+            req_interval = min(req_interval * 2, self.MAX_REQUEST_INTERVAL)
         t1 = time()
 
         src_client.delete(key)
