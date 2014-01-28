@@ -2,7 +2,6 @@ from time import time, sleep
 from threading import Thread
 from uuid import uuid4
 
-from couchbase.user_constants import OBS_PERSISTED
 from logger import logger
 
 from cbagent.collectors import Latency
@@ -15,7 +14,7 @@ class XdcrLag(Latency):
 
     COLLECTOR = "xdcr_lag"
 
-    METRICS = ("xdcr_lag", "xdcr_persistence_time", "xdcr_diff")
+    METRICS = ("xdcr_lag", )
 
     NUM_THREADS = 10
 
@@ -48,33 +47,22 @@ class XdcrLag(Latency):
 
         key = "xdcr_track_{}".format(uhex())
 
-        t0 = time()
         src_client.set(key, key)
-        while True:
-            r = src_client.observe(key)
-            if r.value[0].flags == OBS_PERSISTED:
-                break
-            else:
-                sleep(0.05)
-        t1 = time()
+        t0 = time()
         while True:
             r = dst_client.get(key)
             if r.value:
                 break
             else:
                 sleep(0.05)
-        t2 = time()
+        t1 = time()
 
         src_client.delete(key)
 
         src_pool.release_client(src_client)
         dst_pool.release_client(dst_client)
 
-        return {
-            "xdcr_lag": (t2 - t0) * 1000,
-            "xdcr_persistence_time": (t1 - t0) * 1000,
-            "xdcr_diff": (t2 - t1) * 1000,
-        }
+        return {"xdcr_lag": (t1 - t0) * 1000}  # s -> ms
 
     def sample(self):
         while True:
