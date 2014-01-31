@@ -78,7 +78,7 @@ class Collector(object):
         if not buckets:
             buckets = self.retry(path="/pools/default/buckets")
         for bucket in buckets:
-            if self.buckets is not None and bucket not in self.buckets:
+            if self.buckets is not None and bucket["name"] not in self.buckets:
                 continue
             if with_stats:
                 yield bucket["name"], bucket["stats"]
