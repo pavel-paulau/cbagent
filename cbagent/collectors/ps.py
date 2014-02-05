@@ -12,7 +12,7 @@ class PS(Collector):
         super(PS, self).__init__(settings)
         self.ssh_username = settings.ssh_username
         self.ssh_password = settings.ssh_password
-        self.nodes = list(self.get_nodes())
+        self.nodes = settings.hostnames or list(self.get_nodes())
         if hasattr(settings, "sync_gateway_nodes") and settings.sync_gateway_nodes:
             self.nodes += settings.sync_gateway_nodes
         self.ps = PSStats(hosts=self.nodes,

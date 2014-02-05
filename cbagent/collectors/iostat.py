@@ -10,7 +10,7 @@ class IO(Collector):
         super(IO, self).__init__(settings)
         self.ssh_username = settings.ssh_username
         self.ssh_password = settings.ssh_password
-        self.nodes = list(self.get_nodes())
+        self.nodes = settings.hostnames or list(self.get_nodes())
         self.io = IOstat(hosts=self.nodes,
                          user=settings.ssh_username,
                          password=settings.ssh_password)
