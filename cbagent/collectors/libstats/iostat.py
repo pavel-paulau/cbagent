@@ -18,10 +18,11 @@ class IOstat(RemoteStats):
     )
 
     def get_device_name(self, partition):
-        stdout = run(
-            "mount | grep '{} '".format(partition)
-        )
-        return stdout.split()[0]
+        for path in (partition, '/'):
+            stdout = run("mount | grep '{} '".format(path),
+                         warn_only=True, quiet=True)
+            if not stdout.return_code:
+                return stdout.split()[0]
 
     def get_iostat(self, device):
         stdout = run(
