@@ -48,7 +48,7 @@ class XdcrLag(Latency):
         src_client = src_pool.get_client()
         dst_client = dst_pool.get_client()
 
-        key = "xdcr_track_{}".format(uhex())
+        key = "xdcr_{}".format(uhex())
 
         req_interval = self.INITIAL_REQUEST_INTERVAL
         src_client.set(key, key)
