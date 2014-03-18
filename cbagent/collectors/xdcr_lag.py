@@ -20,6 +20,8 @@ class XdcrLag(Latency):
 
     INITIAL_REQUEST_INTERVAL = 0.01
 
+    SAMPLING_ERROR = 0.05  # 5%
+
     MAX_REQUEST_INTERVAL = 2
 
     def __init__(self, settings):
@@ -59,7 +61,10 @@ class XdcrLag(Latency):
                 break
             else:
                 sleep(req_interval)
-            req_interval = min(req_interval * 2, self.MAX_REQUEST_INTERVAL)
+                req_interval = min(
+                    (time() - t0) * self.SAMPLING_ERROR,
+                    self.MAX_REQUEST_INTERVAL
+                )
         t1 = time()
 
         src_client.delete(key)
