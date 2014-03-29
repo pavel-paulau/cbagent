@@ -34,8 +34,10 @@ class SpringLatency(Latency):
         t0 = time()
         if metric == "latency_set":
             client.create(key, doc)
-        else:
+        elif metric == "latency_get":
             client.read(key)
+        elif metric == "latency_cas":
+            client.cas(key, doc)
         return 1000 * (time() - t0)  # Latency in ms
 
     def sample(self):
@@ -45,6 +47,11 @@ class SpringLatency(Latency):
                 samples[metric] = self.measure(client, metric)
             self.store.append(samples, cluster=self.cluster,
                               bucket=bucket, collector=self.COLLECTOR)
+
+
+class SpringCasLatency(SpringLatency):
+
+    METRICS = ("latency_set", "latency_get", "latency_cas")
 
 
 class SpringQueryLatency(SpringLatency):
