@@ -76,6 +76,5 @@ class SpringQueryLatency(SpringLatency):
         doc = self.new_docs.next(key)
         ddoc_name, view_name, query = self.new_queries.next(doc)
 
-        t0 = time()
-        client.query(ddoc_name, view_name, query=query)
-        return 1000 * (time() - t0)
+        _, latency = client.query(ddoc_name, view_name, query=query)
+        return 1000 * latency  # s -> ms
