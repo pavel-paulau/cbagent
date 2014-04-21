@@ -1,7 +1,7 @@
 from time import time
 
-from spring.docgen import ExistingKey, NewDocument
-from spring.querygen import NewQuery
+from spring.docgen import ExistingKey, NewDocument, NewNestedDocument
+from spring.querygen import NewQuery, NewQueryNG
 from spring.cbgen import CBGen
 
 from cbagent.collectors import Latency
@@ -24,7 +24,10 @@ class SpringLatency(Latency):
         self.existing_keys = ExistingKey(workload.working_set,
                                          workload.working_set_access,
                                          prefix=prefix)
-        self.new_docs = NewDocument(workload.size)
+        if not hasattr(workload, 'doc_gen') or workload.doc_gen == 'old':
+            self.new_docs = NewDocument(workload.size)
+        else:
+            self.new_docs = NewNestedDocument(workload.size)
         self.items = workload.items
 
     def measure(self, client, metric):
@@ -60,9 +63,13 @@ class SpringQueryLatency(SpringLatency):
 
     METRICS = ("latency_query", )
 
-    def __init__(self, settings, workload, ddocs, params, prefix=None):
+    def __init__(self, settings, workload, ddocs, params, index_type,
+                 prefix=None):
         super(SpringQueryLatency, self).__init__(settings, workload, prefix)
-        self.new_queries = NewQuery(ddocs, params)
+        if index_type is None:
+            self.new_queries = NewQuery(ddocs, params)
+        else:
+            self.new_queries = NewQueryNG(index_type)
 
     def measure(self, client, metric):
         key = self.existing_keys.next(curr_items=self.items, curr_deletes=0)
