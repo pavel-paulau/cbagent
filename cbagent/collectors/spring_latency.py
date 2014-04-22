@@ -69,7 +69,7 @@ class SpringQueryLatency(SpringLatency):
         if index_type is None:
             self.new_queries = NewQuery(ddocs, params)
         else:
-            self.new_queries = NewQueryNG(index_type)
+            self.new_queries = NewQueryNG(index_type, params)
 
     def measure(self, client, metric):
         key = self.existing_keys.next(curr_items=self.items, curr_deletes=0)
