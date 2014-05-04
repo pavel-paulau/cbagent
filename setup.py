@@ -1,6 +1,6 @@
 from setuptools import setup
 
-version = '2.2.5'
+version = '2.2.6'
 
 setup(
     name='cbagent',
@@ -27,4 +27,7 @@ setup(
         'seriesly',
         'spring'
     ],
+    dependency_links=[
+        'git+https://github.com/couchbaselabs/spring.git',
+    ]
 )

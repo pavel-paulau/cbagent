@@ -7,4 +7,4 @@ mock
 nose
 requests==2.1.0
 seriesly
-spring
+git+https://github.com/couchbaselabs/spring.git
