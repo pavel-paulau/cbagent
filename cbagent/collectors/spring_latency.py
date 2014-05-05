@@ -1,8 +1,8 @@
 from time import time
 
 from spring.docgen import ExistingKey, NewDocument, NewNestedDocument
-from spring.querygen import NewQuery, NewQueryNG
-from spring.cbgen import CBGen
+from spring.querygen import NewQuery, NewQueryNG, NewN1QLQuery
+from spring.cbgen import CBGen, N1QLGen
 
 from cbagent.collectors import Latency
 
@@ -78,3 +78,16 @@ class SpringQueryLatency(SpringLatency):
 
         _, latency = client.query(ddoc_name, view_name, query=query)
         return 1000 * latency  # s -> ms
+
+
+class SpringN1QLQueryLatency(SpringQueryLatency):
+
+    def __init__(self, settings, workload, index_type, prefix=None):
+        super(SpringQueryLatency, self).__init__(settings, workload, prefix)
+        self.clients = []
+        for bucket in self.get_buckets():
+            client = N1QLGen(bucket=bucket, host=settings.master_node,
+                             username=bucket, password=settings.rest_password)
+            self.clients.append((bucket, client))
+
+        self.new_queries = NewN1QLQuery(index_type)
