@@ -18,7 +18,7 @@ class SpringLatency(Latency):
         self.clients = []
         for bucket in self.get_buckets():
             client = CBGen(bucket=bucket, host=settings.master_node,
-                           username=bucket, password=settings.rest_password)
+                           username=bucket, password=settings.bucket_password)
             self.clients.append((bucket, client))
 
         self.existing_keys = ExistingKey(workload.working_set,
@@ -87,7 +87,7 @@ class SpringN1QLQueryLatency(SpringQueryLatency):
         self.clients = []
         for bucket in self.get_buckets():
             client = N1QLGen(bucket=bucket, host=settings.master_node,
-                             username=bucket, password=settings.rest_password)
+                             username=bucket, password=settings.bucket_password)
             self.clients.append((bucket, client))
 
         self.new_queries = NewN1QLQuery(index_type)

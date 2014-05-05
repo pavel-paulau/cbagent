@@ -20,7 +20,7 @@ class Latency(Collector):
         for bucket in self.get_buckets():
             self.clients.append(Couchbase.connect(
                 bucket=bucket, host=settings.master_node,
-                username=bucket, password=settings.rest_password
+                username=bucket, password=settings.bucket_password
             ))
 
     def update_metadata(self):

@@ -33,14 +33,14 @@ class XdcrLag(Latency):
                 bucket=bucket,
                 host=settings.master_node,
                 username=bucket,
-                password=settings.rest_password,
+                password=settings.bucket_password,
                 quiet=True,
             )
             dst_pool = Pool(
                 bucket=bucket,
                 host=settings.dest_master_node,
                 username=bucket,
-                password=settings.rest_password,
+                password=settings.bucket_password,
                 quiet=True,
                 unlock_gil=False,
             )

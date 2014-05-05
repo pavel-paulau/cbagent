@@ -17,6 +17,7 @@ class Settings(object):
         "dest_master_node": "127.0.0.1",
         "rest_username": "Administrator",
         "rest_password": "password",
+        "bucket_password": "password",
         "ssh_username": "root",
         "ssh_password": "couchbase",
         "partitions": {},

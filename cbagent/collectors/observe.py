@@ -34,7 +34,7 @@ class ObserveLatency(Latency):
                 bucket=bucket,
                 host=settings.master_node,
                 username=bucket,
-                password=settings.rest_password,
+                password=settings.bucket_password,
                 quiet=True,
             )
             self.pools.append((bucket, pool))

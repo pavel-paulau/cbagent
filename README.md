@@ -100,6 +100,10 @@ Some collectors like atop collector require additional parameters, for instance:
     ssh_username  # e.g., "root"
     ssh_password  # e.g., "couchbase"
 
+Latency collector require bucket password in most cases:
+
+    "bucket_password": "password"
+
 CLI wrappers read all these parameters from JSON configuration files. See
 ``sample_config.json`` for details.
 
