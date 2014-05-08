@@ -47,12 +47,9 @@ class ObserveLatency(Latency):
         req_interval = self.INITIAL_REQUEST_INTERVAL
         client.set(key, key)
         t0 = time()
-        while True:
-            r = client.observe(key)
-            if r.value[0].flags == OBS_PERSISTED:
-                break
-            else:
-                sleep(req_interval)
+        while not [v for v in client.observe(key).value
+                   if v.flags == OBS_PERSISTED]:
+            sleep(req_interval)
             req_interval = min(req_interval * 2, self.MAX_REQUEST_INTERVAL)
         t1 = time()
         latency = (t1 - t0) * 1000  # s -> ms
