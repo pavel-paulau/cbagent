@@ -1,6 +1,6 @@
 from setuptools import setup
 
-version = '2.3.5'
+version = '2.3.4'
 
 setup(
     name='cbagent',
@@ -28,6 +28,6 @@ setup(
         'spring'
     ],
     dependency_links=[
-        'git+https://github.com/couchbaselabs/spring.git',
+        'git+https://github.com/couchbaselabs/spring.git#egg=spring',
     ]
 )
