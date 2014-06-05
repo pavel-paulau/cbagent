@@ -15,7 +15,7 @@ class NetStat(RemoteStats):
 
     @single_node_task
     def detect_iface(self):
-        for iface in ("eth0", "em1"):
+        for iface in ("eth5", "eth0", "em1"):
             result = run("grep {} /proc/net/dev".format(iface),
                          warn_only=True, quiet=True)
             if not result.return_code:
