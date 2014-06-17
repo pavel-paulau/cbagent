@@ -2,13 +2,22 @@ from time import time, sleep
 from threading import Thread
 from uuid import uuid4
 
-from couchbase.user_constants import OBS_PERSISTED
+from couchbase.user_constants import OBS_PERSISTED, OBS_NOTFOUND
+from decorator import decorator
 from logger import logger
 
 from cbagent.collectors import Latency
 from cbagent.collectors.libstats.pool import Pool
 
 uhex = lambda: uuid4().hex
+
+
+@decorator
+def timeit(method, *args, **kargs):
+    t0 = time()
+    method(*args, **kargs)
+    t1 = time()
+    return t0, t1
 
 
 class ObserveLatency(Latency):
@@ -39,19 +48,34 @@ class ObserveLatency(Latency):
             )
             self.pools.append((bucket, pool))
 
-    def _measure_lags(self, pool):
-        client = pool.get_client()
+        self.mode = getattr(settings, 'observe', 'persist')  # alt.: 'replicate'
 
-        key = uhex()
-
+    @timeit
+    def _wait_until_persisted(self, client, key):
         req_interval = self.INITIAL_REQUEST_INTERVAL
-        client.set(key, key)
-        t0 = time()
         while not [v for v in client.observe(key).value
                    if v.flags == OBS_PERSISTED]:
             sleep(req_interval)
             req_interval = min(req_interval * 1.5, self.MAX_REQUEST_INTERVAL)
-        t1 = time()
+
+    @timeit
+    def _wait_until_replicated(self, client, key):
+        found = lambda client: [
+            v for v in client.observe(key).value if v.flags != OBS_NOTFOUND
+        ]
+        while len(found(client)) != 2:
+            sleep(0.002)
+
+    def _measure_lags(self, pool):
+        client = pool.get_client()
+
+        key = uhex()
+        client.set(key, key)
+
+        if self.mode == 'persist':
+            t0, t1 = self._wait_until_persisted(client, key)
+        else:
+            t0, t1 = self._wait_until_replicated(client, key)
         latency = (t1 - t0) * 1000  # s -> ms
         sleep_time = max(0, self.MAX_POLLING_INTERVAL - (t1 - t0))
 
