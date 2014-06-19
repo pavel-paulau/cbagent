@@ -5,6 +5,7 @@ version = '2.4.1'
 setup(
     name='cbagent',
     version=version,
+    description='Stats collectors package for Couchbase Server monitoring',
     author='Couchbase',
     license='Apache Software License',
     packages=[
