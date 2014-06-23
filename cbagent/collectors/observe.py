@@ -48,7 +48,7 @@ class ObserveLatency(Latency):
             )
             self.pools.append((bucket, pool))
 
-        self.mode = getattr(settings, 'observe', 'persist')  # alt.: 'replicate'
+        self.mode = getattr(settings, "observe", "persist")  # replicate | index
 
     @timeit
     def _wait_until_persisted(self, client, key):
@@ -66,16 +66,24 @@ class ObserveLatency(Latency):
         while len(found(client)) != 2:
             sleep(0.002)
 
+    @timeit
+    def _wait_until_indexed(self, client, key):
+        rows = None
+        while not rows:
+            rows = tuple(client.query("A", "id_by_city", key=key))
+
     def _measure_lags(self, pool):
         client = pool.get_client()
 
         key = uhex()
-        client.set(key, key)
+        client.set(key, {"city": key})
 
-        if self.mode == 'persist':
+        if self.mode == "persist":
             t0, t1 = self._wait_until_persisted(client, key)
-        else:
+        elif self.mode == "replicate":
             t0, t1 = self._wait_until_replicated(client, key)
+        else:
+            t0, t1 = self._wait_until_indexed(client, key)
         latency = (t1 - t0) * 1000  # s -> ms
         sleep_time = max(0, self.MAX_POLLING_INTERVAL - (t1 - t0))
 
